@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Китайские слова — Словарь</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .main-nav {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            padding: 12px 24px;
+            background: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+
+        .nav-btn.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .mode-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .mode-btn {
+            padding: 12px 24px;
+            background: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .mode-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+
+        .mode-btn.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .filters {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .filter-section {
+            margin-bottom: 15px;
+        }
+
+        .filter-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .filter-header h3 {
+            color: #333;
+            font-size: 1.1em;
+        }
+
+        .filter-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .filter-action-btn {
+            padding: 5px 12px;
+            background: #e0e0e0;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            transition: all 0.2s;
+            color: #555;
+        }
+
+        .filter-action-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 8px 12px;
+            background: #f5f5f5;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .checkbox-item:hover {
+            background: #e0e0e0;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            cursor: pointer;
+            width: 18px;
+            height: 18px;
+        }
+
+        .checkbox-item label {
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .stats {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .card-container {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card {
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s;
+            user-select: none;
+        }
+
+        .card:hover {
+            transform: scale(1.02);
+        }
+
+        .hanzi {
+            font-size: 5em;
+            color: #333;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .pinyin {
+            font-size: 2em;
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .translation {
+            font-size: 1.5em;
+            color: #555;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .control-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .control-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+
+        .btn-know {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .btn-dont-know {
+            background: #f44336;
+            color: white;
+        }
+
+        .btn-back {
+            background: #ff9800;
+            color: white;
+        }
+
+        .btn-next {
+            background: #2196F3;
+            color: white;
+        }
+
+        .btn-shuffle {
+            background: #9c27b0;
+            color: white;
+        }
+
+        .btn-reset {
+            background: #607D8B;
+            color: white;
+        }
+
+        .progress {
+            text-align: center;
+            color: white;
+            font-size: 1.2em;
+            margin-bottom: 20px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+
+        /* Стили для списка слов */
+        .words-list-container {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 12px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            font-size: 16px;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .words-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+        }
+
+        .word-card {
+            background: #f9f9f9;
+            border-radius: 12px;
+            padding: 15px;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+            cursor: pointer;
+        }
+
+        .word-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border-color: #667eea;
+        }
+
+        .word-card.known {
+            background: #e8f5e9;
+            border-color: #4CAF50;
+        }
+
+        .word-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .word-hanzi {
+            font-size: 2.5em;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .word-status {
+            font-size: 1.5em;
+        }
+
+        .word-pinyin {
+            font-size: 1.2em;
+            color: #667eea;
+            margin-bottom: 8px;
+        }
+
+        .word-translation {
+            font-size: 1em;
+            color: #555;
+            margin-bottom: 8px;
+        }
+
+        .word-meta {
+            display: flex;
+            gap: 10px;
+            font-size: 0.85em;
+            color: #999;
+        }
+
+        .word-tag {
+            background: #e0e0e0;
+            padding: 3px 8px;
+            border-radius: 10px;
+        }
+
+        .lesson-info {
+            background: rgba(255,255,255,0.9);
+            padding: 10px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .hanzi {
+                font-size: 3.5em;
+            }
+
+            .pinyin {
+                font-size: 1.5em;
+            }
+
+            .translation {
+                font-size: 1.2em;
+            }
+
+            .card-container {
+                padding: 20px;
+            }
+
+            .filter-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .words-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🀄 Китайский словарь</h1>
+
+        <div class="main-nav">
+            <button class="nav-btn active" data-page="study">📚 Режим изучения</button>
+            <button class="nav-btn" data-page="list">📋 Список слов</button>
+        </div>
+
+        <!-- Режим изучения -->
+        <div id="study-page">
+            <div class="mode-selector">
+                <button class="mode-btn active" data-mode="cards">🎴 Карточки</button>
+                <button class="mode-btn" data-mode="translation">✍️ Перевод → Иероглиф</button>
+                <button class="mode-btn" data-mode="pinyin">✍️ Пиньинь → Иероглиф</button>
+                <button class="mode-btn" data-mode="pinyin-translation">🎯 Пиньинь+Перевод → Иероглиф</button>
+            </div>
+
+            <div class="filters">
+                <div class="filter-section">
+                    <div class="filter-header">
+                        <h3>📚 Уроки:</h3>
+                        <div class="filter-actions">
+                            <button class="filter-action-btn" data-action="select-all" data-target="lessons">✓ Выбрать все</button>
+                            <button class="filter-action-btn" data-action="deselect-all" data-target="lessons">✗ Снять все</button>
+                        </div>
+                    </div>
+                    <div class="checkbox-group" id="lesson-filters"></div>
+                </div>
+
+                <div class="filter-section">
+                    <div class="filter-header">
+                        <h3>📂 Категории:</h3>
+                        <div class="filter-actions">
+                            <button class="filter-action-btn" data-action="select-all" data-target="categories">✓ Выбрать все</button>
+                            <button class="filter-action-btn" data-action="deselect-all" data-target="categories">✗ Снять все</button>
+                        </div>
+                    </div>
+                    <div class="checkbox-group" id="category-filters"></div>
+                </div>
+
+                <div class="filter-section">
+                    <h3>📊 Показ:</h3>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="show-all" checked>
+                            <label for="show-all">Все</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="show-known">
+                            <label for="show-known">Только изученные</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="show-new">
+                            <label for="show-new">Только новые</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-value" id="total-count">0</div>
+                    <div class="stat-label">Всего слов</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="known-count">0</div>
+                    <div class="stat-label">Изучено</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="new-count">0</div>
+                    <div class="stat-label">Новых</div>
+                </div>
+            </div>
+
+            <div class="progress" id="progress">0 из 0</div>
+
+            <div class="card-container">
+                <div class="card" id="card">
+                    <div class="hanzi" id="hanzi"></div>
+                    <div class="pinyin" id="pinyin"></div>
+                    <div class="translation" id="translation"></div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <button class="control-btn btn-know" id="btn-know">✓ Знаю</button>
+                <button class="control-btn btn-dont-know" id="btn-dont-know">❌ Не знаю</button>
+                <button class="control-btn btn-back" id="btn-back">← Назад</button>
+                <button class="control-btn btn-next" id="btn-next">Далее →</button>
+                <button class="control-btn btn-shuffle" id="btn-shuffle">🔀 Перемешать</button>
+                <button class="control-btn btn-reset" id="btn-reset">↺ Сбросить прогресс</button>
+            </div>
+        </div>
+
+        <!-- Список слов -->
+        <div id="list-page" class="hidden">
+            <div class="filters">
+                <div class="filter-section">
+                    <div class="filter-header">
+                        <h3>📚 Уроки:</h3>
+                        <div class="filter-actions">
+                            <button class="filter-action-btn" data-action="select-all" data-target="list-lessons">✓ Выбрать все</button>
+                            <button class="filter-action-btn" data-action="deselect-all" data-target="list-lessons">✗ Снять все</button>
+                        </div>
+                    </div>
+                    <div class="checkbox-group" id="list-lesson-filters"></div>
+                </div>
+
+                <div class="filter-section">
+                    <div class="filter-header">
+                        <h3>📂 Категории:</h3>
+                        <div class="filter-actions">
+                            <button class="filter-action-btn" data-action="select-all" data-target="list-categories">✓ Выбрать все</button>
+                            <button class="filter-action-btn" data-action="deselect-all" data-target="list-categories">✗ Снять все</button>
+                        </div>
+                    </div>
+                    <div class="checkbox-group" id="list-category-filters"></div>
+                </div>
+
+                <div class="filter-section">
+                    <h3>📊 Показ:</h3>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="list-show-all" checked>
+                            <label for="list-show-all">Все</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="list-show-known">
+                            <label for="list-show-known">Только изученные</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="list-show-new">
+                            <label for="list-show-new">Только новые</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="words-list-container">
+                <input type="text" class="search-box" id="search-box" placeholder="🔍 Поиск по иероглифу, пиньиню или переводу...">
+                <div class="words-grid" id="words-grid"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Подключаем файл с данными -->
+    <script src="words.js"></script>
+
+    <script>
+    words.forEach(w => {
+        w.hanzi = w.hanzi.trim();
+        w.pinyin = w.pinyin.trim();
+        w.translation = w.translation.trim();
+        w.category = w.category.trim();
+    });
+    </script>
+
+    <script>
+        // Состояние приложения
+        let currentMode = 'cards';
+        let currentWordIndex = 0;
+        let filteredWords = [...words];
+        let isRevealed = false;
+        let history = [];
+        let currentPage = 'study';
+
+        // Загрузка прогресса из localStorage
+        function loadProgress() {
+            const saved = localStorage.getItem('chineseWordsProgress');
+            return saved ? JSON.parse(saved) : {};
+        }
+
+        // Сохранение прогресса в localStorage
+        function saveProgress(progress) {
+            localStorage.setItem('chineseWordsProgress', JSON.stringify(progress));
+        }
+
+        // Переключение между страницами
+        function switchPage(page) {
+            currentPage = page;
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.page === page);
+            });
+            
+            if (page === 'study') {
+                document.getElementById('study-page').classList.remove('hidden');
+                document.getElementById('list-page').classList.add('hidden');
+            } else {
+                document.getElementById('study-page').classList.add('hidden');
+                document.getElementById('list-page').classList.remove('hidden');
+                updateWordsList();
+            }
+        }
+
+        // Инициализация фильтров
+        function initFilters() {
+            const lessons = [...new Set(words.map(w => w.lesson))].sort((a, b) => a - b);
+            const categories = [...new Set(words.map(w => w.category))].sort();
+
+            // Фильтры для режима изучения
+            const lessonFilters = document.getElementById('lesson-filters');
+            const categoryFilters = document.getElementById('category-filters');
+
+            lessons.forEach(lesson => {
+                const div = document.createElement('div');
+                div.className = 'checkbox-item';
+                div.innerHTML = `
+                    <input type="checkbox" id="lesson-${lesson}" value="${lesson}" checked>
+                    <label for="lesson-${lesson}">Урок ${lesson}</label>
+                `;
+                lessonFilters.appendChild(div);
+            });
+
+            categories.forEach(category => {
+                const div = document.createElement('div');
+                div.className = 'checkbox-item';
+                div.innerHTML = `
+                    <input type="checkbox" id="category-${category}" value="${category}" checked>
+                    <label for="category-${category}">${category}</label>
+                `;
+                categoryFilters.appendChild(div);
+            });
+
+            // Фильтры для списка слов
+            const listLessonFilters = document.getElementById('list-lesson-filters');
+            const listCategoryFilters = document.getElementById('list-category-filters');
+
+            lessons.forEach(lesson => {
+                const div = document.createElement('div');
+                div.className = 'checkbox-item';
+                div.innerHTML = `
+                    <input type="checkbox" id="list-lesson-${lesson}" value="${lesson}" checked>
+                    <label for="list-lesson-${lesson}">Урок ${lesson}</label>
+                `;
+                listLessonFilters.appendChild(div);
+            });
+
+            categories.forEach(category => {
+                const div = document.createElement('div');
+                div.className = 'checkbox-item';
+                div.innerHTML = `
+                    <input type="checkbox" id="list-category-${category}" value="${category}" checked>
+                    <label for="list-category-${category}">${category}</label>
+                `;
+                listCategoryFilters.appendChild(div);
+            });
+
+            // Обработчики событий для фильтров режима изучения
+            document.querySelectorAll('#lesson-filters input, #category-filters input, #show-all, #show-known, #show-new').forEach(checkbox => {
+                checkbox.addEventListener('change', applyFilters);
+            });
+
+            // Обработчики событий для фильтров списка слов
+            document.querySelectorAll('#list-lesson-filters input, #list-category-filters input, #list-show-all, #list-show-known, #list-show-new').forEach(checkbox => {
+                checkbox.addEventListener('change', updateWordsList);
+            });
+
+            // Обработчик поиска
+            document.getElementById('search-box').addEventListener('input', updateWordsList);
+
+            // Обработчики событий для кнопок "Выбрать все" / "Снять все"
+            document.querySelectorAll('.filter-action-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const action = btn.dataset.action;
+                    const target = btn.dataset.target;
+                    
+                    let selector = '';
+                    if (target === 'lessons') {
+                        selector = '#lesson-filters input[type="checkbox"]';
+                    } else if (target === 'categories') {
+                        selector = '#category-filters input[type="checkbox"]';
+                    } else if (target === 'list-lessons') {
+                        selector = '#list-lesson-filters input[type="checkbox"]';
+                    } else if (target === 'list-categories') {
+                        selector = '#list-category-filters input[type="checkbox"]';
+                    }
+                    
+                    const checkboxes = document.querySelectorAll(selector);
+                    const checked = action === 'select-all';
+                    
+                    checkboxes.forEach(cb => {
+                        cb.checked = checked;
+                    });
+                    
+                    if (target.startsWith('list-')) {
+                        updateWordsList();
+                    } else {
+                        applyFilters();
+                    }
+                });
+            });
+        }
+
+        // Применение фильтров для режима изучения
+        function applyFilters() {
+            const selectedLessons = Array.from(document.querySelectorAll('#lesson-filters input:checked')).map(cb => parseInt(cb.value));
+            const selectedCategories = Array.from(document.querySelectorAll('#category-filters input:checked')).map(cb => cb.value);
+            const showAll = document.getElementById('show-all').checked;
+            const showKnown = document.getElementById('show-known').checked;
+            const showNew = document.getElementById('show-new').checked;
+
+            const progress = loadProgress();
+
+            filteredWords = words.filter(word => {
+                const lessonMatch = selectedLessons.includes(word.lesson);
+                const categoryMatch = selectedCategories.includes(word.category);
+                
+                let statusMatch = false;
+                if (showAll) {
+                    statusMatch = true;
+                } else {
+                    const isKnown = progress[word.id] === 'known';
+                    if (showKnown && isKnown) statusMatch = true;
+                    if (showNew && !isKnown) statusMatch = true;
+                }
+
+                return lessonMatch && categoryMatch && statusMatch;
+            });
+
+            currentWordIndex = 0;
+            history = [];
+            updateDisplay();
+            updateStats();
+        }
+
+        // Обновление списка слов
+        function updateWordsList() {
+            const selectedLessons = Array.from(document.querySelectorAll('#list-lesson-filters input:checked')).map(cb => parseInt(cb.value));
+            const selectedCategories = Array.from(document.querySelectorAll('#list-category-filters input:checked')).map(cb => cb.value);
+            const showAll = document.getElementById('list-show-all').checked;
+            const showKnown = document.getElementById('list-show-known').checked;
+            const showNew = document.getElementById('list-show-new').checked;
+            const searchTerm = document.getElementById('search-box').value.toLowerCase();
+
+            const progress = loadProgress();
+
+            const filteredListWords = words.filter(word => {
+                const lessonMatch = selectedLessons.includes(word.lesson);
+                const categoryMatch = selectedCategories.includes(word.category);
+                
+                let statusMatch = false;
+                if (showAll) {
+                    statusMatch = true;
+                } else {
+                    const isKnown = progress[word.id] === 'known';
+                    if (showKnown && isKnown) statusMatch = true;
+                    if (showNew && !isKnown) statusMatch = true;
+                }
+
+                const searchMatch = !searchTerm || 
+                    word.hanzi.toLowerCase().includes(searchTerm) ||
+                    word.pinyin.toLowerCase().includes(searchTerm) ||
+                    word.translation.toLowerCase().includes(searchTerm);
+
+                return lessonMatch && categoryMatch && statusMatch && searchMatch;
+            });
+
+            renderWordsList(filteredListWords, progress);
+        }
+
+        // Отрисовка списка слов
+        function renderWordsList(wordsList, progress) {
+            const grid = document.getElementById('words-grid');
+            grid.innerHTML = '';
+
+            if (wordsList.length === 0) {
+                grid.innerHTML = '<p style="text-align: center; color: #999; padding: 40px; grid-column: 1/-1;">Нет слов, соответствующих фильтрам</p>';
+                return;
+            }
+
+            wordsList.forEach(word => {
+                const isKnown = progress[word.id] === 'known';
+                const card = document.createElement('div');
+                card.className = `word-card ${isKnown ? 'known' : ''}`;
+                card.innerHTML = `
+                    <div class="word-header">
+                        <div class="word-hanzi">${word.hanzi}</div>
+                        <div class="word-status">${isKnown ? '✓' : ''}</div>
+                    </div>
+                    <div class="word-pinyin">${word.pinyin}</div>
+                    <div class="word-translation">${word.translation}</div>
+                    <div class="word-meta">
+                        <span class="word-tag">Урок ${word.lesson}</span>
+                        <span class="word-tag">${word.category}</span>
+                    </div>
+                `;
+                
+                card.addEventListener('click', () => {
+                    if (isKnown) {
+                        delete progress[word.id];
+                    } else {
+                        progress[word.id] = 'known';
+                    }
+                    saveProgress(progress);
+                    updateWordsList();
+                    updateStats();
+                });
+                
+                grid.appendChild(card);
+            });
+        }
+
+        // Обновление статистики
+        function updateStats() {
+            const progress = loadProgress();
+            const total = filteredWords.length;
+            const known = filteredWords.filter(w => progress[w.id] === 'known').length;
+            const newWords = total - known;
+
+            document.getElementById('total-count').textContent = total;
+            document.getElementById('known-count').textContent = known;
+            document.getElementById('new-count').textContent = newWords;
+            document.getElementById('progress').textContent = `${currentWordIndex + 1} из ${total}`;
+        }
+
+        // Обновление отображения карточки
+        function updateDisplay() {
+            if (filteredWords.length === 0) {
+                document.getElementById('hanzi').textContent = 'Нет слов';
+                document.getElementById('pinyin').textContent = '';
+                document.getElementById('translation').textContent = '';
+                return;
+            }
+
+            const word = filteredWords[currentWordIndex];
+            isRevealed = false;
+
+            switch (currentMode) {
+                case 'cards':
+                    document.getElementById('hanzi').textContent = word.hanzi;
+                    document.getElementById('pinyin').textContent = word.pinyin;
+                    document.getElementById('translation').textContent = word.translation;
+                    break;
+                case 'translation':
+                    document.getElementById('hanzi').textContent = '';
+                    document.getElementById('pinyin').textContent = '';
+                    document.getElementById('translation').textContent = word.translation;
+                    break;
+                case 'pinyin':
+                    document.getElementById('hanzi').textContent = '';
+                    document.getElementById('pinyin').textContent = word.pinyin;
+                    document.getElementById('translation').textContent = '';
+                    break;
+                case 'pinyin-translation':
+                    document.getElementById('hanzi').textContent = '';
+                    document.getElementById('pinyin').textContent = word.pinyin;
+                    document.getElementById('translation').textContent = word.translation;
+                    break;
+            }
+        }
+
+        // Раскрытие карточки
+        function revealCard() {
+            if (filteredWords.length === 0) return;
+            
+            const word = filteredWords[currentWordIndex];
+            isRevealed = true;
+
+            switch (currentMode) {
+                case 'translation':
+                    document.getElementById('hanzi').textContent = word.hanzi;
+                    document.getElementById('pinyin').textContent = word.pinyin;
+                    break;
+                case 'pinyin':
+                    document.getElementById('hanzi').textContent = word.hanzi;
+                    document.getElementById('translation').textContent = word.translation;
+                    break;
+                case 'pinyin-translation':
+                    document.getElementById('hanzi').textContent = word.hanzi;
+                    break;
+            }
+        }
+
+        // Следующее слово
+        function nextWord() {
+            if (filteredWords.length === 0) return;
+            history.push(currentWordIndex);
+            currentWordIndex = (currentWordIndex + 1) % filteredWords.length;
+            updateDisplay();
+            updateStats();
+        }
+
+        // Предыдущее слово
+        function previousWord() {
+            if (history.length === 0) return;
+            currentWordIndex = history.pop();
+            updateDisplay();
+            updateStats();
+        }
+
+        // Отметить как изученное
+        function markAsKnown() {
+            if (filteredWords.length === 0) return;
+            const word = filteredWords[currentWordIndex];
+            const progress = loadProgress();
+            progress[word.id] = 'known';
+            saveProgress(progress);
+            updateStats();
+            nextWord();
+        }
+
+        // Отметить как неизученное
+        function markAsUnknown() {
+            if (filteredWords.length === 0) return;
+            const word = filteredWords[currentWordIndex];
+            const progress = loadProgress();
+            delete progress[word.id];
+            saveProgress(progress);
+            updateStats();
+            nextWord();
+        }
+
+        // Перемешать слова
+        function shuffleWords() {
+            for (let i = filteredWords.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [filteredWords[i], filteredWords[j]] = [filteredWords[j], filteredWords[i]];
+            }
+            currentWordIndex = 0;
+            history = [];
+            updateDisplay();
+            updateStats();
+        }
+
+        // Сбросить прогресс
+        function resetProgress() {
+            if (confirm('Вы уверены, что хотите сбросить весь прогресс?')) {
+                localStorage.removeItem('chineseWordsProgress');
+                updateStats();
+                if (currentPage === 'list') {
+                    updateWordsList();
+                }
+            }
+        }
+
+        // Обработчики событий
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                switchPage(btn.dataset.page);
+            });
+        });
+
+        document.querySelectorAll('.mode-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentMode = btn.dataset.mode;
+                updateDisplay();
+            });
+        });
+
+        document.getElementById('card').addEventListener('click', () => {
+            if (!isRevealed && currentMode !== 'cards') {
+                revealCard();
+            }
+        });
+
+        document.getElementById('btn-know').addEventListener('click', markAsKnown);
+        document.getElementById('btn-dont-know').addEventListener('click', markAsUnknown);
+        document.getElementById('btn-back').addEventListener('click', previousWord);
+        document.getElementById('btn-next').addEventListener('click', nextWord);
+        document.getElementById('btn-shuffle').addEventListener('click', shuffleWords);
+        document.getElementById('btn-reset').addEventListener('click', resetProgress);
+
+        // Клавиатурные сокращения
+        document.addEventListener('keydown', (e) => {
+            if (currentPage === 'study') {
+                if (e.key === 'ArrowRight') nextWord();
+                if (e.key === 'ArrowLeft') previousWord();
+                if (e.key === ' ' || e.key === 'Enter') {
+                    e.preventDefault();
+                    if (!isRevealed && currentMode !== 'cards') {
+                        revealCard();
+                    }
+                }
+            }
+        });
+
+        // Инициализация
+        initFilters();
+        updateDisplay();
+        updateStats();
+    </script>
+</body>
+</html>
