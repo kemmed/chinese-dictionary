@@ -5,1022 +5,800 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Китайские слова — Словарь</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
+            color: #2c3e50;
             min-height: 100vh;
             padding: 20px;
         }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
+        .container { max-width: 1100px; margin: 0 auto; }
+        h1 { text-align: center; font-size: 2.2em; margin-bottom: 20px; color: #c0392b; }
+        .top-menu {
+            display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px;
+            justify-content: center; background: white; padding: 15px;
+            border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
-
-        h1 {
-            text-align: center;
-            color: white;
-            margin-bottom: 30px;
-            font-size: 2.5em;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        .top-btn {
+            padding: 12px 22px; background: white; border: 2px solid #ddd;
+            border-radius: 25px; cursor: pointer; font-size: 15px;
+            transition: all 0.2s; font-weight: 500;
         }
-
-        .main-nav {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            justify-content: center;
-            flex-wrap: wrap;
+        .top-btn:hover { border-color: #c0392b; color: #c0392b; }
+        .top-btn.active { background: #c0392b; color: white; border-color: #c0392b; }
+        .submenu {
+            display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px;
+            justify-content: center; padding: 12px; background: #fff5f5;
+            border-radius: 10px; border: 1px dashed #e74c3c;
         }
-
-        .nav-btn {
-            padding: 12px 24px;
-            background: white;
-            border: none;
-            border-radius: 25px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: 600;
-            transition: all 0.3s;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        .submenu-btn {
+            padding: 8px 16px; background: white; border: 2px solid #e74c3c;
+            border-radius: 20px; cursor: pointer; font-size: 14px; transition: all 0.2s;
         }
-
-        .nav-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        .submenu-btn:hover { background: #ffe0e0; }
+        .submenu-btn.active { background: #e74c3c; color: white; }
+        .panel {
+            background: white; border-radius: 12px; padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-bottom: 20px;
         }
-
-        .nav-btn.active {
-            background: #667eea;
-            color: white;
+        .filter-section { margin-bottom: 15px; }
+        .filter-title {
+            font-weight: 600; margin-bottom: 8px; color: #34495e;
+            display: flex; justify-content: space-between; align-items: center;
         }
-
-        .mode-selector {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-            justify-content: center;
+        .filter-title small { font-weight: normal; color: #7f8c8d; cursor: pointer; }
+        .filter-title small:hover { color: #c0392b; }
+        .book-group { margin-bottom: 15px; padding: 12px; background: #f8f9fa; border-radius: 8px; }
+        .book-name { font-weight: 600; color: #c0392b; margin-bottom: 10px; font-size: 16px; }
+        .part-group { margin-left: 15px; margin-bottom: 10px; }
+        .part-name { font-weight: 500; color: #555; margin-bottom: 6px; font-size: 14px; }
+        .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-left: 15px; }
+        .chip {
+            padding: 6px 12px; background: #ecf0f1; border: 1px solid #ddd;
+            border-radius: 15px; cursor: pointer; font-size: 13px;
+            transition: all 0.15s; user-select: none;
         }
-
-        .mode-btn {
-            padding: 12px 24px;
-            background: white;
-            border: none;
-            border-radius: 25px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: 600;
-            transition: all 0.3s;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        .chip:hover { background: #d5dbdb; }
+        .chip.active { background: #c0392b; color: white; border-color: #c0392b; }
+        .book-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+        .book-chip {
+            padding: 8px 16px; background: #ecf0f1; border: 1px solid #ddd;
+            border-radius: 15px; cursor: pointer; font-size: 14px;
+            transition: all 0.15s; user-select: none;
         }
-
-        .mode-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
-        }
-
-        .mode-btn.active {
-            background: #667eea;
-            color: white;
-        }
-
-        .filters {
-            background: white;
-            padding: 20px;
-            border-radius: 15px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-
-        .filter-section {
-            margin-bottom: 15px;
-        }
-
-        .filter-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 10px;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .filter-header h3 {
-            color: #333;
-            font-size: 1.1em;
-        }
-
-        .filter-actions {
-            display: flex;
-            gap: 8px;
-        }
-
-        .filter-action-btn {
-            padding: 5px 12px;
-            background: #e0e0e0;
-            border: none;
-            border-radius: 15px;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: 500;
-            transition: all 0.2s;
-            color: #555;
-        }
-
-        .filter-action-btn:hover {
-            background: #667eea;
-            color: white;
-        }
-
-        .checkbox-group {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .checkbox-item {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            padding: 8px 12px;
-            background: #f5f5f5;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .checkbox-item:hover {
-            background: #e0e0e0;
-        }
-
-        .checkbox-item input[type="checkbox"] {
-            cursor: pointer;
-            width: 18px;
-            height: 18px;
-        }
-
-        .checkbox-item label {
-            cursor: pointer;
-            font-size: 14px;
-        }
-
+        .book-chip:hover { background: #d5dbdb; }
+        .book-chip.active { background: #c0392b; color: white; border-color: #c0392b; }
         .stats {
-            background: white;
-            padding: 20px;
-            border-radius: 15px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            display: flex;
-            justify-content: space-around;
-            flex-wrap: wrap;
-            gap: 15px;
+            display: flex; gap: 20px; flex-wrap: wrap; padding: 15px;
+            background: #f8f9fa; border-radius: 8px; margin-bottom: 20px; align-items: center;
         }
-
-        .stat-item {
-            text-align: center;
+        .stat-item { font-size: 14px; }
+        .stat-item strong { color: #c0392b; font-size: 18px; }
+        .mode-selector { display: flex; gap: 8px; flex-wrap: wrap; }
+        .mode-btn {
+            padding: 8px 14px; background: #ecf0f1; border: none;
+            border-radius: 6px; cursor: pointer; font-size: 13px;
         }
-
-        .stat-value {
-            font-size: 2em;
-            font-weight: bold;
-            color: #667eea;
-        }
-
-        .stat-label {
-            font-size: 0.9em;
-            color: #666;
-            margin-top: 5px;
-        }
-
-        .card-container {
-            background: white;
-            border-radius: 15px;
-            padding: 40px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            min-height: 400px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .card {
-            cursor: pointer;
-            text-align: center;
-            transition: all 0.3s;
-            user-select: none;
-        }
-
-        .card:hover {
-            transform: scale(1.02);
-        }
-
-        .hanzi {
-            font-size: 5em;
-            color: #333;
-            margin-bottom: 20px;
-            font-weight: bold;
-        }
-
-        .pinyin {
-            font-size: 2em;
-            color: #667eea;
-            margin-bottom: 15px;
-        }
-
-        .translation {
-            font-size: 1.5em;
-            color: #555;
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        .controls {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-bottom: 20px;
-        }
-
-        .control-btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 25px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: 600;
-            transition: all 0.3s;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-
-        .control-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
-        }
-
-        .btn-know {
-            background: #4CAF50;
-            color: white;
-        }
-
-        .btn-dont-know {
-            background: #f44336;
-            color: white;
-        }
-
-        .btn-back {
-            background: #ff9800;
-            color: white;
-        }
-
-        .btn-next {
-            background: #2196F3;
-            color: white;
-        }
-
-        .btn-shuffle {
-            background: #9c27b0;
-            color: white;
-        }
-
-        .btn-reset {
-            background: #607D8B;
-            color: white;
-        }
-
-        .progress {
-            text-align: center;
-            color: white;
-            font-size: 1.2em;
-            margin-bottom: 20px;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
-        }
-
-        /* Стили для списка слов */
-        .words-list-container {
-            background: white;
-            border-radius: 15px;
-            padding: 20px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-
-        .search-box {
-            width: 100%;
-            padding: 12px 20px;
-            border: 2px solid #e0e0e0;
-            border-radius: 25px;
-            font-size: 16px;
-            margin-bottom: 20px;
-            transition: all 0.3s;
-        }
-
-        .search-box:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
+        .mode-btn.active { background: #34495e; color: white; }
         .words-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 15px;
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px;
         }
-
         .word-card {
-            background: #f9f9f9;
-            border-radius: 12px;
-            padding: 15px;
-            transition: all 0.3s;
-            border: 2px solid transparent;
-            cursor: pointer;
+            background: #fafbfc; border: 1px solid #e1e4e8; border-radius: 10px;
+            padding: 15px; transition: all 0.2s;
         }
-
-        .word-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            border-color: #667eea;
-        }
-
-        .word-card.known {
-            background: #e8f5e9;
-            border-color: #4CAF50;
-        }
-
-        .word-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-
-        .word-hanzi {
-            font-size: 2.5em;
-            color: #333;
-            font-weight: bold;
-        }
-
-        .word-status {
-            font-size: 1.5em;
-        }
-
-        .word-pinyin {
-            font-size: 1.2em;
-            color: #667eea;
-            margin-bottom: 8px;
-        }
-
-        .word-translation {
-            font-size: 1em;
-            color: #555;
-            margin-bottom: 8px;
-        }
-
+        .word-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+        .word-card.learned { border-left: 4px solid #27ae60; }
+        .word-card.new { border-left: 4px solid #3498db; }
+        .word-hanzi { font-size: 32px; color: #c0392b; margin-bottom: 5px; }
+        .word-pinyin { font-size: 16px; color: #7f8c8d; margin-bottom: 5px; }
+        .word-translation { font-size: 14px; color: #2c3e50; }
         .word-meta {
-            display: flex;
-            gap: 10px;
-            font-size: 0.85em;
-            color: #999;
+            font-size: 11px; color: #95a5a6; margin-top: 8px;
+            padding-top: 8px; border-top: 1px dashed #ecf0f1;
         }
-
-        .word-tag {
-            background: #e0e0e0;
-            padding: 3px 8px;
-            border-radius: 10px;
+        .flashcard-area { text-align: center; padding: 20px; }
+        .flashcard-full {
+            background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+            border: 2px solid #e1e4e8; border-radius: 16px; padding: 40px;
+            min-height: 280px; display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            margin: 0 auto 20px; max-width: 600px;
         }
-
-        .lesson-info {
-            background: rgba(255,255,255,0.9);
-            padding: 10px 20px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            text-align: center;
+        .flashcard-full .hanzi { font-size: 72px; color: #c0392b; margin-bottom: 15px; }
+        .flashcard-full .pinyin { font-size: 28px; color: #7f8c8d; margin-bottom: 15px; }
+        .flashcard-full .translation { font-size: 22px; color: #2c3e50; }
+        .dictation-area { text-align: center; padding: 20px; }
+        .dictation-card {
+            background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+            border: 2px solid #e1e4e8; border-radius: 16px; padding: 50px 40px;
+            min-height: 280px; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; cursor: pointer;
+            transition: all 0.3s; margin: 0 auto 20px; max-width: 600px; user-select: none;
         }
-
-        @media (max-width: 768px) {
-            h1 {
-                font-size: 1.8em;
-            }
-
-            .hanzi {
-                font-size: 3.5em;
-            }
-
-            .pinyin {
-                font-size: 1.5em;
-            }
-
-            .translation {
-                font-size: 1.2em;
-            }
-
-            .card-container {
-                padding: 20px;
-            }
-
-            .filter-header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .words-grid {
-                grid-template-columns: 1fr;
-            }
+        .dictation-card:hover { border-color: #c0392b; }
+        .dictation-card .hint-text { font-size: 14px; color: #95a5a6; margin-top: 20px; }
+        .dictation-card .pinyin { font-size: 36px; color: #2c3e50; margin-bottom: 10px; }
+        .dictation-card .translation { font-size: 24px; color: #555; margin-bottom: 10px; }
+        .dictation-card .hanzi { font-size: 72px; color: #c0392b; margin-bottom: 15px; }
+        .dictation-card .pinyin-answer { font-size: 28px; color: #7f8c8d; margin-bottom: 10px; }
+        .dictation-card .translation-answer { font-size: 20px; color: #2c3e50; }
+        .quiz-area { text-align: center; padding: 20px; }
+        .quiz-question {
+            font-size: 28px; margin: 20px 0; padding: 20px; background: #f8f9fa;
+            border-radius: 10px; min-height: 100px;
+            display: flex; flex-direction: column; justify-content: center;
+        }
+        .quiz-options {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px; margin: 20px 0;
+        }
+        .quiz-option {
+            padding: 15px; background: white; border: 2px solid #e1e4e8;
+            border-radius: 10px; cursor: pointer; font-size: 20px; transition: all 0.2s;
+        }
+        .quiz-option:hover { border-color: #c0392b; background: #fff5f5; }
+        .quiz-option.correct { background: #d4efdf; border-color: #27ae60; }
+        .quiz-option.wrong { background: #fadbd8; border-color: #e74c3c; }
+        .controls { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 15px; }
+        .btn {
+            padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer;
+            font-size: 14px; font-weight: 500; transition: all 0.2s;
+        }
+        .btn-primary { background: #c0392b; color: white; }
+        .btn-primary:hover { background: #a93226; }
+        .btn-success { background: #27ae60; color: white; }
+        .btn-success:hover { background: #229954; }
+        .btn-danger { background: #e74c3c; color: white; }
+        .btn-danger:hover { background: #cb4335; }
+        .btn-secondary { background: #95a5a6; color: white; }
+        .btn-secondary:hover { background: #7f8c8d; }
+        .progress-bar {
+            height: 8px; background: #ecf0f1; border-radius: 4px;
+            overflow: hidden; margin: 15px 0;
+        }
+        .progress-fill {
+            height: 100%; background: linear-gradient(90deg, #c0392b, #e74c3c);
+            transition: width 0.3s;
+        }
+        .empty-state { text-align: center; padding: 60px 20px; color: #95a5a6; }
+        .empty-state .emoji { font-size: 60px; margin-bottom: 15px; }
+        @media (max-width: 600px) {
+            h1 { font-size: 1.6em; }
+            .flashcard-full .hanzi, .dictation-card .hanzi { font-size: 50px; }
+            .flashcard-full, .dictation-card { padding: 30px 20px; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>🀄 Китайский словарь</h1>
+<div class="container">
+    <h1>🀄 Китайский словарь</h1>
 
-        <div class="main-nav">
-            <button class="nav-btn active" data-page="study">📚 Режим изучения</button>
-            <button class="nav-btn" data-page="list">📋 Список слов</button>
+    <div class="top-menu">
+        <button class="top-btn active" data-mode="list">📋 Список слов</button>
+        <button class="top-btn" data-mode="cards">🎴 Карточки</button>
+        <button class="top-btn" data-mode="dictation">✍️ Режим диктанта</button>
+        <button class="top-btn" data-mode="test">🎯 Режим теста</button>
+    </div>
+
+    <div class="submenu" id="dictation-submenu" style="display:none;">
+        <button class="submenu-btn active" data-dict-type="py">🔤 По пиньиню</button>
+        <button class="submenu-btn" data-dict-type="tr">📝 По переводу</button>
+        <button class="submenu-btn" data-dict-type="both">🔤📝 По пиньиню и переводу</button>
+    </div>
+
+    <div class="submenu" id="test-submenu" style="display:none;">
+        <button class="submenu-btn active" data-test-type="tr">📝 Перевод → Иероглиф</button>
+        <button class="submenu-btn" data-test-type="py">🔤 Пиньинь → Иероглиф</button>
+        <button class="submenu-btn" data-test-type="both">🎯 Пиньинь+Перевод → Иероглиф</button>
+    </div>
+
+    <div class="panel">
+        <div class="filter-section">
+            <div class="filter-title">
+                <span>📚 Учебники</span>
+                <span onclick="toggleAllBooks()">✓ Все / ✗ Снять</span>
+            </div>
+            <div class="book-chips" id="book-filters"></div>
         </div>
-
-        <!-- Режим изучения -->
-        <div id="study-page">
+        <div class="filter-section">
+            <div class="filter-title"><span>📖 Уроки</span></div>
+            <div id="lesson-filters"></div>
+        </div>
+        <div class="filter-section">
+            <div class="filter-title">
+                <span>📂 Категории</span>
+                <span onclick="toggleAll('category')">✓ Все / ✗ Снять</span>
+            </div>
+            <div class="chips" id="category-filters"></div>
+        </div>
+        <div class="filter-section">
+            <div class="filter-title"><span>🔍 Поиск</span></div>
+            <input type="text" id="search-input" placeholder="Иероглиф, пиньинь или перевод..." 
+                   style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px; font-size:14px;">
+        </div>
+        <div class="filter-section">
+            <div class="filter-title"><span>📊 Показ</span></div>
             <div class="mode-selector">
-                <button class="mode-btn active" data-mode="cards">🎴 Карточки</button>
-                <button class="mode-btn" data-mode="translation">✍️ Перевод → Иероглиф</button>
-                <button class="mode-btn" data-mode="pinyin">✍️ Пиньинь → Иероглиф</button>
-                <button class="mode-btn" data-mode="pinyin-translation">🎯 Пиньинь+Перевод → Иероглиф</button>
-            </div>
-
-            <div class="filters">
-                <div class="filter-section">
-                    <div class="filter-header">
-                        <h3>📚 Уроки:</h3>
-                        <div class="filter-actions">
-                            <button class="filter-action-btn" data-action="select-all" data-target="lessons">✓ Выбрать все</button>
-                            <button class="filter-action-btn" data-action="deselect-all" data-target="lessons">✗ Снять все</button>
-                        </div>
-                    </div>
-                    <div class="checkbox-group" id="lesson-filters"></div>
-                </div>
-
-                <div class="filter-section">
-                    <div class="filter-header">
-                        <h3>📂 Категории:</h3>
-                        <div class="filter-actions">
-                            <button class="filter-action-btn" data-action="select-all" data-target="categories">✓ Выбрать все</button>
-                            <button class="filter-action-btn" data-action="deselect-all" data-target="categories">✗ Снять все</button>
-                        </div>
-                    </div>
-                    <div class="checkbox-group" id="category-filters"></div>
-                </div>
-
-                <div class="filter-section">
-                    <h3>📊 Показ:</h3>
-                    <div class="checkbox-group">
-                        <div class="checkbox-item">
-                            <input type="checkbox" id="show-all" checked>
-                            <label for="show-all">Все</label>
-                        </div>
-                        <div class="checkbox-item">
-                            <input type="checkbox" id="show-known">
-                            <label for="show-known">Только изученные</label>
-                        </div>
-                        <div class="checkbox-item">
-                            <input type="checkbox" id="show-new">
-                            <label for="show-new">Только новые</label>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="stats">
-                <div class="stat-item">
-                    <div class="stat-value" id="total-count">0</div>
-                    <div class="stat-label">Всего слов</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-value" id="known-count">0</div>
-                    <div class="stat-label">Изучено</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-value" id="new-count">0</div>
-                    <div class="stat-label">Новых</div>
-                </div>
-            </div>
-
-            <div class="progress" id="progress">0 из 0</div>
-
-            <div class="card-container">
-                <div class="card" id="card">
-                    <div class="hanzi" id="hanzi"></div>
-                    <div class="pinyin" id="pinyin"></div>
-                    <div class="translation" id="translation"></div>
-                </div>
-            </div>
-
-            <div class="controls">
-                <button class="control-btn btn-know" id="btn-know">✓ Знаю</button>
-                <button class="control-btn btn-dont-know" id="btn-dont-know">❌ Не знаю</button>
-                <button class="control-btn btn-back" id="btn-back">← Назад</button>
-                <button class="control-btn btn-next" id="btn-next">Далее →</button>
-                <button class="control-btn btn-shuffle" id="btn-shuffle">🔀 Перемешать</button>
-                <button class="control-btn btn-reset" id="btn-reset">↺ Сбросить прогресс</button>
-            </div>
-        </div>
-
-        <!-- Список слов -->
-        <div id="list-page" class="hidden">
-            <div class="filters">
-                <div class="filter-section">
-                    <div class="filter-header">
-                        <h3>📚 Уроки:</h3>
-                        <div class="filter-actions">
-                            <button class="filter-action-btn" data-action="select-all" data-target="list-lessons">✓ Выбрать все</button>
-                            <button class="filter-action-btn" data-action="deselect-all" data-target="list-lessons">✗ Снять все</button>
-                        </div>
-                    </div>
-                    <div class="checkbox-group" id="list-lesson-filters"></div>
-                </div>
-
-                <div class="filter-section">
-                    <div class="filter-header">
-                        <h3>📂 Категории:</h3>
-                        <div class="filter-actions">
-                            <button class="filter-action-btn" data-action="select-all" data-target="list-categories">✓ Выбрать все</button>
-                            <button class="filter-action-btn" data-action="deselect-all" data-target="list-categories">✗ Снять все</button>
-                        </div>
-                    </div>
-                    <div class="checkbox-group" id="list-category-filters"></div>
-                </div>
-
-                <div class="filter-section">
-                    <h3>📊 Показ:</h3>
-                    <div class="checkbox-group">
-                        <div class="checkbox-item">
-                            <input type="checkbox" id="list-show-all" checked>
-                            <label for="list-show-all">Все</label>
-                        </div>
-                        <div class="checkbox-item">
-                            <input type="checkbox" id="list-show-known">
-                            <label for="list-show-known">Только изученные</label>
-                        </div>
-                        <div class="checkbox-item">
-                            <input type="checkbox" id="list-show-new">
-                            <label for="list-show-new">Только новые</label>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="words-list-container">
-                <input type="text" class="search-box" id="search-box" placeholder="🔍 Поиск по иероглифу, пиньиню или переводу...">
-                <div class="words-grid" id="words-grid"></div>
+                <button class="mode-btn active" data-show="all">Все</button>
+                <button class="mode-btn" data-show="learned">Только изученные</button>
+                <button class="mode-btn" data-show="new">Только новые</button>
             </div>
         </div>
     </div>
 
-    <!-- Подключаем файл с данными -->
-    <script src="words.js"></script>
+    <div class="stats">
+        <div class="stat-item">Всего: <strong id="stat-total">0</strong></div>
+        <div class="stat-item">Изучено: <strong id="stat-learned">0</strong></div>
+        <div class="stat-item">Новых: <strong id="stat-new">0</strong></div>
+        <div class="stat-item" style="margin-left:auto;">
+            <button class="btn btn-secondary" onclick="shuffleWords()">🔀 Перемешать</button>
+            <button class="btn btn-danger" onclick="resetProgress()">↺ Сбросить прогресс</button>
+        </div>
+    </div>
 
-    <script>
-    words.forEach(w => {
-        w.hanzi = w.hanzi.trim();
-        w.pinyin = w.pinyin.trim();
-        w.translation = w.translation.trim();
-        w.category = w.category.trim();
+    <div class="panel" id="content-area"></div>
+</div>
+
+<script src="book-textbook.js"></script>
+<script src="book-listening.js"></script>
+<script src="book-workbook.js"></script>
+
+<script>
+// ============ ОБЪЕДИНЕНИЕ ДАННЫХ ============
+const allWords = [
+    ...(typeof words !== 'undefined' ? words : []),
+    ...(typeof wordsListening !== 'undefined' ? wordsListening : []),
+    ...(typeof wordsWorkbook !== 'undefined' ? wordsWorkbook : [])
+].map(w => ({
+    ...w,
+    hanzi: (w.hanzi || '').trim(),
+    pinyin: (w.pinyin || '').trim(),
+    translation: (w.translation || '').trim(),
+    category: (w.category || '').trim(),
+    // Приводим lesson к числу и part к числу (на случай если там строки)
+    lesson: Number(w.lesson) || 1,
+    part: Number(w.part) || 1,
+    book: Number(w.book) || 1,
+    key: `${w.book}_${w.part}_${w.lesson}_${w.hanzi}`
+}));
+
+const bookNames = { 1: 'Основной', 2: 'Аудирование', 3: 'Рабочая тетрадь' };
+console.log(`📚 Загружено слов: ${allWords.length}`);
+
+// ============ СОСТОЯНИЕ ============
+const state = {
+    mode: 'list',
+    dictationType: 'py',
+    testType: 'tr',
+    show: 'all',
+    filters: { book: new Set(), lesson: new Set(), category: new Set() },
+    search: '',
+    learned: new Set(JSON.parse(localStorage.getItem('learned') || '[]')),
+    cardIndex: 0,
+    quizIndex: 0,
+    quizCorrect: 0,
+    quizTotal: 0,
+    quizAnswered: false,
+    dictationRevealed: false
+};
+
+function saveProgress() {
+    localStorage.setItem('learned', JSON.stringify([...state.learned]));
+}
+
+// ============ ФИЛЬТРЫ ============
+function buildFilters() {
+    const books = [...new Set(allWords.map(w => w.book))].sort((a,b) => a-b);
+    const categories = [...new Set(allWords.map(w => w.category))].sort();
+
+    const bookContainer = document.getElementById('book-filters');
+    bookContainer.innerHTML = '';
+    books.forEach(b => {
+        const chip = document.createElement('div');
+        chip.className = 'book-chip active';
+        chip.textContent = bookNames[b] || `Учебник ${b}`;
+        chip.dataset.value = b;
+        state.filters.book.add(b);
+        chip.onclick = () => toggleBook(chip, b);
+        bookContainer.appendChild(chip);
     });
-    </script>
 
-    <script>
-        // Состояние приложения
-        let currentMode = 'cards';
-        let currentWordIndex = 0;
-        let filteredWords = [...words];
-        let isRevealed = false;
-        let history = [];
-        let currentPage = 'study';
+    buildLessonFilters();
 
-        // Загрузка прогресса из localStorage
-        function loadProgress() {
-            const saved = localStorage.getItem('chineseWordsProgress');
-            return saved ? JSON.parse(saved) : {};
+    const catContainer = document.getElementById('category-filters');
+    catContainer.innerHTML = '';
+    categories.forEach(c => {
+        const chip = document.createElement('div');
+        chip.className = 'chip active';
+        chip.textContent = c;
+        state.filters.category.add(c);
+        chip.onclick = () => toggleChip(chip, 'category', c);
+        catContainer.appendChild(chip);
+    });
+}
+function buildLessonFilters() {
+    const container = document.getElementById('lesson-filters');
+    container.innerHTML = '';
+    const books = [...new Set(allWords.map(w => w.book))].sort((a,b) => a-b);
+
+    books.forEach(book => {
+        const bookGroup = document.createElement('div');
+        bookGroup.className = 'book-group';
+
+        const bookName = document.createElement('div');
+        bookName.className = 'book-name';
+        
+        // Иконки для заголовка учебника
+        if (book === 1) {
+            bookName.textContent = '📗📙 Основной';
+        } else if (book === 2) {
+            bookName.textContent = '📗📙 Аудирование';
+        } else if (book === 3) {
+            bookName.textContent = '📘 Рабочая тетрадь';
+        } else {
+            bookName.textContent = bookNames[book] || `Учебник ${book}`;
         }
+        bookGroup.appendChild(bookName);
 
-        // Сохранение прогресса в localStorage
-        function saveProgress(progress) {
-            localStorage.setItem('chineseWordsProgress', JSON.stringify(progress));
-        }
+        // Получаем уникальные части для этого учебника
+        const parts = [...new Set(
+            allWords.filter(w => w.book === book).map(w => w.part)
+        )].sort((a,b) => a-b);
 
-        // Переключение между страницами
-        function switchPage(page) {
-            currentPage = page;
-            document.querySelectorAll('.nav-btn').forEach(btn => {
-                btn.classList.toggle('active', btn.dataset.page === page);
-            });
-            
-            if (page === 'study') {
-                document.getElementById('study-page').classList.remove('hidden');
-                document.getElementById('list-page').classList.add('hidden');
-            } else {
-                document.getElementById('study-page').classList.add('hidden');
-                document.getElementById('list-page').classList.remove('hidden');
-                updateWordsList();
-            }
-        }
+        // Определяем, нужно ли показывать заголовки частей
+        const showPartHeaders = parts.length > 1;
 
-        // Инициализация фильтров
-        function initFilters() {
-            const lessons = [...new Set(words.map(w => w.lesson))].sort((a, b) => a - b);
-            const categories = [...new Set(words.map(w => w.category))].sort();
+        parts.forEach(partNum => {
+            const partGroup = document.createElement('div');
+            partGroup.className = 'part-group';
 
-            // Фильтры для режима изучения
-            const lessonFilters = document.getElementById('lesson-filters');
-            const categoryFilters = document.getElementById('category-filters');
-
-            lessons.forEach(lesson => {
-                const div = document.createElement('div');
-                div.className = 'checkbox-item';
-                div.innerHTML = `
-                    <input type="checkbox" id="lesson-${lesson}" value="${lesson}" checked>
-                    <label for="lesson-${lesson}">Урок ${lesson}</label>
-                `;
-                lessonFilters.appendChild(div);
-            });
-
-            categories.forEach(category => {
-                const div = document.createElement('div');
-                div.className = 'checkbox-item';
-                div.innerHTML = `
-                    <input type="checkbox" id="category-${category}" value="${category}" checked>
-                    <label for="category-${category}">${category}</label>
-                `;
-                categoryFilters.appendChild(div);
-            });
-
-            // Фильтры для списка слов
-            const listLessonFilters = document.getElementById('list-lesson-filters');
-            const listCategoryFilters = document.getElementById('list-category-filters');
-
-            lessons.forEach(lesson => {
-                const div = document.createElement('div');
-                div.className = 'checkbox-item';
-                div.innerHTML = `
-                    <input type="checkbox" id="list-lesson-${lesson}" value="${lesson}" checked>
-                    <label for="list-lesson-${lesson}">Урок ${lesson}</label>
-                `;
-                listLessonFilters.appendChild(div);
-            });
-
-            categories.forEach(category => {
-                const div = document.createElement('div');
-                div.className = 'checkbox-item';
-                div.innerHTML = `
-                    <input type="checkbox" id="list-category-${category}" value="${category}" checked>
-                    <label for="list-category-${category}">${category}</label>
-                `;
-                listCategoryFilters.appendChild(div);
-            });
-
-            // Обработчики событий для фильтров режима изучения
-            document.querySelectorAll('#lesson-filters input, #category-filters input, #show-all, #show-known, #show-new').forEach(checkbox => {
-                checkbox.addEventListener('change', applyFilters);
-            });
-
-            // Обработчики событий для фильтров списка слов
-            document.querySelectorAll('#list-lesson-filters input, #list-category-filters input, #list-show-all, #list-show-known, #list-show-new').forEach(checkbox => {
-                checkbox.addEventListener('change', updateWordsList);
-            });
-
-            // Обработчик поиска
-            document.getElementById('search-box').addEventListener('input', updateWordsList);
-
-            // Обработчики событий для кнопок "Выбрать все" / "Снять все"
-            document.querySelectorAll('.filter-action-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const action = btn.dataset.action;
-                    const target = btn.dataset.target;
-                    
-                    let selector = '';
-                    if (target === 'lessons') {
-                        selector = '#lesson-filters input[type="checkbox"]';
-                    } else if (target === 'categories') {
-                        selector = '#category-filters input[type="checkbox"]';
-                    } else if (target === 'list-lessons') {
-                        selector = '#list-lesson-filters input[type="checkbox"]';
-                    } else if (target === 'list-categories') {
-                        selector = '#list-category-filters input[type="checkbox"]';
-                    }
-                    
-                    const checkboxes = document.querySelectorAll(selector);
-                    const checked = action === 'select-all';
-                    
-                    checkboxes.forEach(cb => {
-                        cb.checked = checked;
-                    });
-                    
-                    if (target.startsWith('list-')) {
-                        updateWordsList();
-                    } else {
-                        applyFilters();
-                    }
-                });
-            });
-        }
-
-        // Применение фильтров для режима изучения
-        function applyFilters() {
-            const selectedLessons = Array.from(document.querySelectorAll('#lesson-filters input:checked')).map(cb => parseInt(cb.value));
-            const selectedCategories = Array.from(document.querySelectorAll('#category-filters input:checked')).map(cb => cb.value);
-            const showAll = document.getElementById('show-all').checked;
-            const showKnown = document.getElementById('show-known').checked;
-            const showNew = document.getElementById('show-new').checked;
-
-            const progress = loadProgress();
-
-            filteredWords = words.filter(word => {
-                const lessonMatch = selectedLessons.includes(word.lesson);
-                const categoryMatch = selectedCategories.includes(word.category);
+            // Заголовок части только если частей больше одной
+            if (showPartHeaders) {
+                const partName = document.createElement('div');
+                partName.className = 'part-name';
                 
-                let statusMatch = false;
-                if (showAll) {
-                    statusMatch = true;
+                // Иконка части для Основного и Аудирования
+                if (book === 1 || book === 2) {
+                    partName.textContent = partNum === 1 
+                        ? '📗 Часть 1' 
+                        : '📙 Часть 2';
                 } else {
-                    const isKnown = progress[word.id] === 'known';
-                    if (showKnown && isKnown) statusMatch = true;
-                    if (showNew && !isKnown) statusMatch = true;
+                    partName.textContent = `Часть ${partNum}`;
                 }
-
-                return lessonMatch && categoryMatch && statusMatch;
-            });
-
-            currentWordIndex = 0;
-            history = [];
-            updateDisplay();
-            updateStats();
-        }
-
-        // Обновление списка слов
-        function updateWordsList() {
-            const selectedLessons = Array.from(document.querySelectorAll('#list-lesson-filters input:checked')).map(cb => parseInt(cb.value));
-            const selectedCategories = Array.from(document.querySelectorAll('#list-category-filters input:checked')).map(cb => cb.value);
-            const showAll = document.getElementById('list-show-all').checked;
-            const showKnown = document.getElementById('list-show-known').checked;
-            const showNew = document.getElementById('list-show-new').checked;
-            const searchTerm = document.getElementById('search-box').value.toLowerCase();
-
-            const progress = loadProgress();
-
-            const filteredListWords = words.filter(word => {
-                const lessonMatch = selectedLessons.includes(word.lesson);
-                const categoryMatch = selectedCategories.includes(word.category);
-                
-                let statusMatch = false;
-                if (showAll) {
-                    statusMatch = true;
-                } else {
-                    const isKnown = progress[word.id] === 'known';
-                    if (showKnown && isKnown) statusMatch = true;
-                    if (showNew && !isKnown) statusMatch = true;
-                }
-
-                const searchMatch = !searchTerm || 
-                    word.hanzi.toLowerCase().includes(searchTerm) ||
-                    word.pinyin.toLowerCase().includes(searchTerm) ||
-                    word.translation.toLowerCase().includes(searchTerm);
-
-                return lessonMatch && categoryMatch && statusMatch && searchMatch;
-            });
-
-            renderWordsList(filteredListWords, progress);
-        }
-
-        // Отрисовка списка слов
-        function renderWordsList(wordsList, progress) {
-            const grid = document.getElementById('words-grid');
-            grid.innerHTML = '';
-
-            if (wordsList.length === 0) {
-                grid.innerHTML = '<p style="text-align: center; color: #999; padding: 40px; grid-column: 1/-1;">Нет слов, соответствующих фильтрам</p>';
-                return;
+                partGroup.appendChild(partName);
             }
 
-            wordsList.forEach(word => {
-                const isKnown = progress[word.id] === 'known';
-                const card = document.createElement('div');
-                card.className = `word-card ${isKnown ? 'known' : ''}`;
-                card.innerHTML = `
-                    <div class="word-header">
-                        <div class="word-hanzi">${word.hanzi}</div>
-                        <div class="word-status">${isKnown ? '✓' : ''}</div>
-                    </div>
-                    <div class="word-pinyin">${word.pinyin}</div>
-                    <div class="word-translation">${word.translation}</div>
+            // Получаем уроки для этой части
+            const lessons = [...new Set(
+                allWords.filter(w => w.book === book && w.part === partNum).map(w => w.lesson)
+            )].sort((a,b) => a-b);
+
+            const partChips = document.createElement('div');
+            partChips.className = 'chips';
+
+            lessons.forEach(lesson => {
+                const chip = document.createElement('div');
+                chip.className = 'chip active';
+                chip.textContent = `Урок ${lesson}`;
+                chip.dataset.value = `${book}-${partNum}-${lesson}`;
+                state.filters.lesson.add(`${book}-${partNum}-${lesson}`);
+                chip.onclick = () => toggleChip(chip, 'lesson', `${book}-${partNum}-${lesson}`);
+                partChips.appendChild(chip);
+            });
+
+            partGroup.appendChild(partChips);
+            bookGroup.appendChild(partGroup);
+        });
+
+        container.appendChild(bookGroup);
+    });
+}
+function toggleBook(chip, book) {
+    if (state.filters.book.has(book)) {
+        state.filters.book.delete(book);
+        chip.classList.remove('active');
+    } else {
+        state.filters.book.add(book);
+        chip.classList.add('active');
+    }
+    render();
+}
+
+function toggleAllBooks() {
+    const allValues = [...new Set(allWords.map(w => w.book))];
+    const allSelected = state.filters.book.size === allValues.length;
+    const chips = document.querySelectorAll('.book-chip');
+    state.filters.book.clear();
+    chips.forEach(chip => {
+        if (allSelected) {
+            chip.classList.remove('active');
+        } else {
+            state.filters.book.add(parseInt(chip.dataset.value));
+            chip.classList.add('active');
+        }
+    });
+    render();
+}
+
+function toggleChip(chip, type, value) {
+    if (state.filters[type].has(value)) {
+        state.filters[type].delete(value);
+        chip.classList.remove('active');
+    } else {
+        state.filters[type].add(value);
+        chip.classList.add('active');
+    }
+    render();
+}
+
+function toggleAll(type) {
+    const allValues = [...new Set(allWords.map(w => 
+        type === 'lesson' ? `${w.book}-${w.part}-${w.lesson}` : w.category
+    ))];
+    const container = document.getElementById(`${type}-filters`);
+    const chips = container.querySelectorAll('.chip');
+    const allSelected = state.filters[type].size === allValues.length;
+    state.filters[type].clear();
+    chips.forEach(chip => {
+        if (allSelected) {
+            chip.classList.remove('active');
+        } else {
+            state.filters[type].add(chip.dataset.value);
+            chip.classList.add('active');
+        }
+    });
+    render();
+}
+
+// ============ ФИЛЬТРАЦИЯ ============
+function getFilteredWords() {
+    return allWords.filter(w => {
+        if (!state.filters.book.has(w.book)) return false;
+        const lessonKey = `${w.book}-${w.part}-${w.lesson}`;
+        if (!state.filters.lesson.has(lessonKey)) return false;
+        if (!state.filters.category.has(w.category)) return false;
+        if (state.search) {
+            const s = state.search.toLowerCase();
+            if (!w.hanzi.toLowerCase().includes(s) &&
+                !w.pinyin.toLowerCase().includes(s) &&
+                !w.translation.toLowerCase().includes(s)) return false;
+        }
+        if (state.show === 'learned' && !state.learned.has(w.key)) return false;
+        if (state.show === 'new' && state.learned.has(w.key)) return false;
+        return true;
+    });
+}
+
+// ============ РЕНДЕР ============
+function render() {
+    const filtered = getFilteredWords();
+    updateStats(filtered);
+    const area = document.getElementById('content-area');
+
+    if (filtered.length === 0) {
+        area.innerHTML = `
+            <div class="empty-state">
+                <div class="emoji">📭</div>
+                <h3>Слова не найдены</h3>
+                <p>Попробуйте изменить фильтры или поисковый запрос</p>
+            </div>`;
+        return;
+    }
+
+    switch(state.mode) {
+        case 'list': renderList(filtered, area); break;
+        case 'cards': renderCards(filtered, area); break;
+        case 'dictation': renderDictation(filtered, area); break;
+        case 'test': renderTest(filtered, area); break;
+    }
+}
+
+function updateStats(filtered) {
+    const total = filtered.length;
+    const learned = filtered.filter(w => state.learned.has(w.key)).length;
+    document.getElementById('stat-total').textContent = total;
+    document.getElementById('stat-learned').textContent = learned;
+    document.getElementById('stat-new').textContent = total - learned;
+}
+
+function renderList(words, area) {
+    area.innerHTML = `
+        <div class="words-grid">
+            ${words.map(w => `
+                <div class="word-card ${state.learned.has(w.key) ? 'learned' : 'new'}">
+                    <div class="word-hanzi">${w.hanzi}</div>
+                    <div class="word-pinyin">${w.pinyin}</div>
+                    <div class="word-translation">${w.translation}</div>
                     <div class="word-meta">
-                        <span class="word-tag">Урок ${word.lesson}</span>
-                        <span class="word-tag">${word.category}</span>
+                        📖 ${bookNames[w.book]}, часть ${w.part}, урок ${w.lesson} · ${w.category}
+                        <span style="float:right; cursor:pointer;" onclick="toggleLearned('${w.key}')">
+                            ${state.learned.has(w.key) ? '✅' : '⬜'}
+                        </span>
                     </div>
-                `;
-                
-                card.addEventListener('click', () => {
-                    if (isKnown) {
-                        delete progress[word.id];
-                    } else {
-                        progress[word.id] = 'known';
-                    }
-                    saveProgress(progress);
-                    updateWordsList();
-                    updateStats();
-                });
-                
-                grid.appendChild(card);
-            });
+                </div>
+            `).join('')}
+        </div>`;
+}
+
+function renderCards(words, area) {
+    if (state.cardIndex >= words.length) state.cardIndex = 0;
+    const w = words[state.cardIndex];
+    area.innerHTML = `
+        <div class="flashcard-area">
+            <div class="progress-bar">
+                <div class="progress-fill" style="width:${((state.cardIndex+1)/words.length*100)}%"></div>
+            </div>
+            <div style="margin-bottom:10px; color:#7f8c8d;">
+                Карточка ${state.cardIndex+1} из ${words.length}
+            </div>
+            <div class="flashcard-full">
+                <div class="hanzi">${w.hanzi}</div>
+                <div class="pinyin">${w.pinyin}</div>
+                <div class="translation">${w.translation}</div>
+            </div>
+            <div class="controls">
+                <button class="btn btn-secondary" onclick="prevCard()">← Назад</button>
+                <button class="btn btn-danger" onclick="markCard(false)">❌ Не знаю</button>
+                <button class="btn btn-success" onclick="markCard(true)">✓ Знаю</button>
+                <button class="btn btn-primary" onclick="nextCard()">Далее →</button>
+            </div>
+        </div>`;
+}
+
+function renderDictation(words, area) {
+    if (state.cardIndex >= words.length) state.cardIndex = 0;
+    const w = words[state.cardIndex];
+
+    let hintHTML = '';
+    if (state.dictationType === 'py') {
+        hintHTML = `<div class="pinyin">${w.pinyin}</div>`;
+    } else if (state.dictationType === 'tr') {
+        hintHTML = `<div class="translation">${w.translation}</div>`;
+    } else {
+        hintHTML = `<div class="pinyin">${w.pinyin}</div><div class="translation">${w.translation}</div>`;
+    }
+
+    let revealedHTML = '';
+    if (state.dictationRevealed) {
+        revealedHTML = `
+            <div class="hanzi">${w.hanzi}</div>
+            <div class="pinyin-answer">${w.pinyin}</div>
+            <div class="translation-answer">${w.translation}</div>`;
+    }
+
+    area.innerHTML = `
+        <div class="dictation-area">
+            <div class="progress-bar">
+                <div class="progress-fill" style="width:${((state.cardIndex+1)/words.length*100)}%"></div>
+            </div>
+            <div style="margin-bottom:10px; color:#7f8c8d;">
+                Слово ${state.cardIndex+1} из ${words.length}
+            </div>
+            <div class="dictation-card" onclick="revealDictation()">
+                ${state.dictationRevealed ? revealedHTML : (hintHTML + '<div class="hint-text">👆 Нажмите, чтобы увидеть иероглиф</div>')}
+            </div>
+            <div class="controls">
+                <button class="btn btn-secondary" onclick="prevCard()">← Назад</button>
+                <button class="btn btn-danger" onclick="markCard(false)">❌ Не знаю</button>
+                <button class="btn btn-success" onclick="markCard(true)">✓ Знаю</button>
+                <button class="btn btn-primary" onclick="nextCard()">Далее →</button>
+            </div>
+        </div>`;
+}
+
+function revealDictation() {
+    state.dictationRevealed = true;
+    render();
+}
+
+function renderTest(words, area) {
+    if (state.quizIndex >= words.length) {
+        area.innerHTML = `
+            <div class="quiz-area">
+                <h2>🎉 Тест завершён!</h2>
+                <p style="font-size:24px; margin:20px 0;">
+                    Правильных ответов: <strong style="color:#27ae60;">${state.quizCorrect}</strong> 
+                    из <strong>${state.quizTotal}</strong>
+                </p>
+                <p style="font-size:20px;">
+                    Точность: <strong>${state.quizTotal ? Math.round(state.quizCorrect/state.quizTotal*100) : 0}%</strong>
+                </p>
+                <div class="controls" style="margin-top:30px;">
+                    <button class="btn btn-primary" onclick="restartQuiz()">🔄 Пройти заново</button>
+                </div>
+            </div>`;
+        return;
+    }
+
+    const current = words[state.quizIndex];
+    const wrongOptions = [];
+    const pool = words.filter(w => w.key !== current.key);
+    while (wrongOptions.length < 3 && pool.length > 0) {
+        const idx = Math.floor(Math.random() * pool.length);
+        const opt = pool.splice(idx, 1)[0];
+        if (!wrongOptions.find(o => o.hanzi === opt.hanzi)) wrongOptions.push(opt);
+    }
+    while (wrongOptions.length < 3) {
+        const rand = allWords[Math.floor(Math.random() * allWords.length)];
+        if (rand.key !== current.key && !wrongOptions.find(o => o.hanzi === rand.hanzi)) {
+            wrongOptions.push(rand);
         }
+    }
 
-        // Обновление статистики
-        function updateStats() {
-            const progress = loadProgress();
-            const total = filteredWords.length;
-            const known = filteredWords.filter(w => progress[w.id] === 'known').length;
-            const newWords = total - known;
+    const options = [current, ...wrongOptions].sort(() => Math.random() - 0.5);
 
-            document.getElementById('total-count').textContent = total;
-            document.getElementById('known-count').textContent = known;
-            document.getElementById('new-count').textContent = newWords;
-            document.getElementById('progress').textContent = `${currentWordIndex + 1} из ${total}`;
-        }
+    let questionHTML = '';
+    if (state.testType === 'tr') {
+        questionHTML = `<div class="translation" style="font-size:32px;">${current.translation}</div>`;
+    } else if (state.testType === 'py') {
+        questionHTML = `<div class="pinyin" style="font-size:36px;">${current.pinyin}</div>`;
+    } else {
+        questionHTML = `
+            <div class="pinyin" style="font-size:28px; margin-bottom:10px;">${current.pinyin}</div>
+            <div class="translation" style="font-size:22px;">${current.translation}</div>`;
+    }
 
-        // Обновление отображения карточки
-        function updateDisplay() {
-            if (filteredWords.length === 0) {
-                document.getElementById('hanzi').textContent = 'Нет слов';
-                document.getElementById('pinyin').textContent = '';
-                document.getElementById('translation').textContent = '';
-                return;
-            }
+    area.innerHTML = `
+        <div class="quiz-area">
+            <div class="progress-bar">
+                <div class="progress-fill" style="width:${((state.quizIndex)/words.length*100)}%"></div>
+            </div>
+            <div style="color:#7f8c8d; margin-bottom:10px;">
+                Вопрос ${state.quizIndex+1} из ${words.length} · Правильно: ${state.quizCorrect}
+            </div>
+            <div class="quiz-question">${questionHTML}</div>
+            <div class="quiz-options">
+                ${options.map(o => `
+                    <div class="quiz-option" data-hanzi="${o.hanzi}" onclick="answerQuiz(this, '${current.hanzi.replace(/'/g,"\\'")}', '${o.key}')">
+                        ${o.hanzi}
+                    </div>
+                `).join('')}
+            </div>
+        </div>`;
+}
 
-            const word = filteredWords[currentWordIndex];
-            isRevealed = false;
-
-            switch (currentMode) {
-                case 'cards':
-                    document.getElementById('hanzi').textContent = word.hanzi;
-                    document.getElementById('pinyin').textContent = word.pinyin;
-                    document.getElementById('translation').textContent = word.translation;
-                    break;
-                case 'translation':
-                    document.getElementById('hanzi').textContent = '';
-                    document.getElementById('pinyin').textContent = '';
-                    document.getElementById('translation').textContent = word.translation;
-                    break;
-                case 'pinyin':
-                    document.getElementById('hanzi').textContent = '';
-                    document.getElementById('pinyin').textContent = word.pinyin;
-                    document.getElementById('translation').textContent = '';
-                    break;
-                case 'pinyin-translation':
-                    document.getElementById('hanzi').textContent = '';
-                    document.getElementById('pinyin').textContent = word.pinyin;
-                    document.getElementById('translation').textContent = word.translation;
-                    break;
-            }
-        }
-
-        // Раскрытие карточки
-        function revealCard() {
-            if (filteredWords.length === 0) return;
-            
-            const word = filteredWords[currentWordIndex];
-            isRevealed = true;
-
-            switch (currentMode) {
-                case 'translation':
-                    document.getElementById('hanzi').textContent = word.hanzi;
-                    document.getElementById('pinyin').textContent = word.pinyin;
-                    break;
-                case 'pinyin':
-                    document.getElementById('hanzi').textContent = word.hanzi;
-                    document.getElementById('translation').textContent = word.translation;
-                    break;
-                case 'pinyin-translation':
-                    document.getElementById('hanzi').textContent = word.hanzi;
-                    break;
-            }
-        }
-
-        // Следующее слово
-        function nextWord() {
-            if (filteredWords.length === 0) return;
-            history.push(currentWordIndex);
-            currentWordIndex = (currentWordIndex + 1) % filteredWords.length;
-            updateDisplay();
-            updateStats();
-        }
-
-        // Предыдущее слово
-        function previousWord() {
-            if (history.length === 0) return;
-            currentWordIndex = history.pop();
-            updateDisplay();
-            updateStats();
-        }
-
-        // Отметить как изученное
-        function markAsKnown() {
-            if (filteredWords.length === 0) return;
-            const word = filteredWords[currentWordIndex];
-            const progress = loadProgress();
-            progress[word.id] = 'known';
-            saveProgress(progress);
-            updateStats();
-            nextWord();
-        }
-
-        // Отметить как неизученное
-        function markAsUnknown() {
-            if (filteredWords.length === 0) return;
-            const word = filteredWords[currentWordIndex];
-            const progress = loadProgress();
-            delete progress[word.id];
-            saveProgress(progress);
-            updateStats();
-            nextWord();
-        }
-
-        // Перемешать слова
-        function shuffleWords() {
-            for (let i = filteredWords.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [filteredWords[i], filteredWords[j]] = [filteredWords[j], filteredWords[i]];
-            }
-            currentWordIndex = 0;
-            history = [];
-            updateDisplay();
-            updateStats();
-        }
-
-        // Сбросить прогресс
-        function resetProgress() {
-            if (confirm('Вы уверены, что хотите сбросить весь прогресс?')) {
-                localStorage.removeItem('chineseWordsProgress');
-                updateStats();
-                if (currentPage === 'list') {
-                    updateWordsList();
-                }
-            }
-        }
-
-        // Обработчики событий
-        document.querySelectorAll('.nav-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                switchPage(btn.dataset.page);
-            });
+function answerQuiz(el, correctHanzi, wordKey) {
+    if (state.quizAnswered) return;
+    state.quizAnswered = true;
+    const isCorrect = el.dataset.hanzi === correctHanzi;
+    if (isCorrect) {
+        el.classList.add('correct');
+        state.quizCorrect++;
+        state.learned.add(wordKey);
+    } else {
+        el.classList.add('wrong');
+        document.querySelectorAll('.quiz-option').forEach(opt => {
+            if (opt.dataset.hanzi === correctHanzi) opt.classList.add('correct');
         });
+    }
+    state.quizTotal++;
+    saveProgress();
+    updateStats(getFilteredWords());
+    setTimeout(() => {
+        state.quizIndex++;
+        state.quizAnswered = false;
+        render();
+    }, 1200);
+}
 
-        document.querySelectorAll('.mode-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                currentMode = btn.dataset.mode;
-                updateDisplay();
-            });
-        });
+function restartQuiz() {
+    state.quizIndex = 0;
+    state.quizCorrect = 0;
+    state.quizTotal = 0;
+    render();
+}
 
-        document.getElementById('card').addEventListener('click', () => {
-            if (!isRevealed && currentMode !== 'cards') {
-                revealCard();
-            }
-        });
+function prevCard() {
+    const words = getFilteredWords();
+    state.cardIndex = (state.cardIndex - 1 + words.length) % words.length;
+    state.dictationRevealed = false;
+    render();
+}
+function nextCard() {
+    const words = getFilteredWords();
+    state.cardIndex = (state.cardIndex + 1) % words.length;
+    state.dictationRevealed = false;
+    render();
+}
+function markCard(known) {
+    const words = getFilteredWords();
+    const w = words[state.cardIndex];
+    if (known) state.learned.add(w.key);
+    else state.learned.delete(w.key);
+    saveProgress();
+    nextCard();
+}
+function toggleLearned(key) {
+    if (state.learned.has(key)) state.learned.delete(key);
+    else state.learned.add(key);
+    saveProgress();
+    render();
+}
+function shuffleWords() {
+    for (let i = allWords.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [allWords[i], allWords[j]] = [allWords[j], allWords[i]];
+    }
+    state.cardIndex = 0;
+    state.quizIndex = 0;
+    state.dictationRevealed = false;
+    render();
+}
+function resetProgress() {
+    if (!confirm('Сбросить весь прогресс изучения?')) return;
+    state.learned.clear();
+    state.cardIndex = 0;
+    state.quizIndex = 0;
+    state.quizCorrect = 0;
+    state.quizTotal = 0;
+    state.dictationRevealed = false;
+    saveProgress();
+    render();
+}
 
-        document.getElementById('btn-know').addEventListener('click', markAsKnown);
-        document.getElementById('btn-dont-know').addEventListener('click', markAsUnknown);
-        document.getElementById('btn-back').addEventListener('click', previousWord);
-        document.getElementById('btn-next').addEventListener('click', nextWord);
-        document.getElementById('btn-shuffle').addEventListener('click', shuffleWords);
-        document.getElementById('btn-reset').addEventListener('click', resetProgress);
+// ============ ОБРАБОТЧИКИ ============
+document.querySelectorAll('.top-btn').forEach(btn => {
+    btn.onclick = () => {
+        document.querySelectorAll('.top-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        state.mode = btn.dataset.mode;
+        state.cardIndex = 0;
+        state.quizIndex = 0;
+        state.quizCorrect = 0;
+        state.quizTotal = 0;
+        state.dictationRevealed = false;
+        document.getElementById('dictation-submenu').style.display = 
+            state.mode === 'dictation' ? 'flex' : 'none';
+        document.getElementById('test-submenu').style.display = 
+            state.mode === 'test' ? 'flex' : 'none';
+        render();
+    };
+});
 
-        // Клавиатурные сокращения
-        document.addEventListener('keydown', (e) => {
-            if (currentPage === 'study') {
-                if (e.key === 'ArrowRight') nextWord();
-                if (e.key === 'ArrowLeft') previousWord();
-                if (e.key === ' ' || e.key === 'Enter') {
-                    e.preventDefault();
-                    if (!isRevealed && currentMode !== 'cards') {
-                        revealCard();
-                    }
-                }
-            }
-        });
+document.querySelectorAll('[data-dict-type]').forEach(btn => {
+    btn.onclick = () => {
+        document.querySelectorAll('[data-dict-type]').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        state.dictationType = btn.dataset.dictType;
+        state.cardIndex = 0;
+        state.dictationRevealed = false;
+        render();
+    };
+});
 
-        // Инициализация
-        initFilters();
-        updateDisplay();
-        updateStats();
-    </script>
+document.querySelectorAll('[data-test-type]').forEach(btn => {
+    btn.onclick = () => {
+        document.querySelectorAll('[data-test-type]').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        state.testType = btn.dataset.testType;
+        state.quizIndex = 0;
+        state.quizCorrect = 0;
+        state.quizTotal = 0;
+        state.quizAnswered = false;
+        render();
+    };
+});
+
+document.querySelectorAll('[data-show]').forEach(btn => {
+    btn.onclick = () => {
+        document.querySelectorAll('[data-show]').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        state.show = btn.dataset.show;
+        state.cardIndex = 0;
+        state.quizIndex = 0;
+        render();
+    };
+});
+
+document.getElementById('search-input').oninput = (e) => {
+    state.search = e.target.value;
+    render();
+};
+
+buildFilters();
+render();
+</script>
 </body>
 </html>
