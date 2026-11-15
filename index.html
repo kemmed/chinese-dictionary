@@ -169,6 +169,124 @@
             .flashcard-full .hanzi, .dictation-card .hanzi { font-size: 50px; }
             .flashcard-full, .dictation-card { padding: 30px 20px; }
         }
+
+
+        /* ===== FLEX MODE (Z Flip, складные телефоны) ===== */
+        @media (max-height: 500px) and (orientation: portrait) {
+    body {
+        padding: 8px;
+    }
+    
+    h1 {
+        font-size: 1.2em;
+        margin-bottom: 8px;
+    }
+    
+    /* Скрываем фильтры в Flex Mode — они занимают много места */
+    .panel:first-of-type {
+        display: none;
+    }
+    
+    /* Верхняя часть — карточка */
+    .flashcard-area,
+    .dictation-area,
+    .quiz-area {
+        padding: 5px;
+        height: 55vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+    
+    .flashcard-full,
+    .dictation-card {
+        min-height: auto;
+        height: 45vh;
+        max-width: 100%;
+        padding: 20px;
+        margin: 0 auto 10px;
+    }
+    
+    .flashcard-full .hanzi,
+    .dictation-card .hanzi {
+        font-size: 56px;
+    }
+    
+    .flashcard-full .pinyin,
+    .dictation-card .pinyin-answer {
+        font-size: 22px;
+    }
+    
+    .flashcard-full .translation,
+    .dictation-card .translation-answer {
+        font-size: 18px;
+    }
+    
+    /* Прогресс-бар компактнее */
+    .progress-bar {
+        margin: 5px 0;
+        height: 6px;
+    }
+    
+    /* Нижняя часть — кнопки */
+    .controls {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: white;
+        padding: 10px;
+        box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+        z-index: 100;
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+    }
+    
+    .controls .btn {
+        padding: 12px 16px;
+        font-size: 13px;
+        flex: 1;
+        max-width: 120px;
+    }
+    
+    /* Список слов — компактный */
+    .words-grid {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+    
+    .word-card {
+        padding: 10px;
+    }
+    
+    .word-hanzi {
+        font-size: 24px;
+    }
+    
+    /* Скрываем статистику в Flex Mode */
+    .stats {
+        display: none;
+    }
+    
+    /* Верхнее меню — одна строка */
+    .top-menu {
+        padding: 8px;
+        gap: 5px;
+    }
+    
+    .top-btn {
+        padding: 8px 12px;
+        font-size: 12px;
+    }
+        }
+
+        /* Для Z Flip в полностью разложенном состоянии */
+        @media (min-height: 800px) and (max-width: 400px) {
+            /* Обычный мобильный layout — ничего не меняем */
+        }
+
+        
     </style>
 </head>
 <body>
@@ -1101,6 +1219,46 @@ function toggleAllLessons() {
     
     render();
 }
+
+
+// ===== ОПРЕДЕЛЕНИЕ FLEX MODE (Z Flip) =====
+function isFlexMode() {
+    // Flex Mode: низкая высота + портретная ориентация
+    return window.innerHeight <= 500 && window.innerWidth < window.innerHeight;
+}
+
+function handleFlexMode() {
+    const body = document.body;
+    if (isFlexMode()) {
+        body.classList.add('flex-mode');
+        console.log('📱 Flex Mode detected (Z Flip)');
+    } else {
+        body.classList.remove('flex-mode');
+    }
+}
+
+// Слушаем изменение размера (когда пользователь складывает/разкладывает телефон)
+let resizeTimer;
+window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(handleFlexMode, 200);
+});
+
+// Проверяем при загрузке
+handleFlexMode();
+// Samsung Flex Mode API (только для Samsung Internet Browser)
+if (window.SamsungFlexMode) {
+    window.SamsungFlexMode.addEventListener('flexmodechange', (event) => {
+        console.log('Samsung Flex Mode:', event.state);
+        // 'flat' — разложен, 'flex' — согнут, 'closed' — закрыт
+        if (event.state === 'flex') {
+            document.body.classList.add('flex-mode');
+        } else {
+            document.body.classList.remove('flex-mode');
+        }
+    });
+}
+
 
 buildFilters();
 render();
