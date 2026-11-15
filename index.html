@@ -195,38 +195,51 @@
     </div>
 
     <div class="panel">
-        <div class="filter-section">
-            <div class="filter-title">
-                <span>📚 Учебники</span>
-                <span onclick="toggleAllBooks()">✓ Все / ✗ Снять</span>
-            </div>
-            <div class="book-chips" id="book-filters"></div>
+    <div class="filter-section">
+        <div class="filter-title">
+            <span>📚 Учебники</span>
+            <span onclick="toggleAllBooks()">✓ Все / ✗ Снять</span>
         </div>
-        <div class="filter-section">
-            <div class="filter-title"><span>📖 Уроки</span></div>
-            <div id="lesson-filters"></div>
+        <div class="book-chips" id="book-filters"></div>
+    </div>
+    
+    <div class="filter-section">
+        <div class="filter-title" style="cursor:pointer; user-select:none;" onclick="toggleSection('lessons', this)">
+            <span style="display:flex; align-items:center; gap:8px;">
+                <span id="lessons-arrow" style="font-size:12px; transition:transform 0.2s;">▶</span>
+                <span>📖 Уроки</span>
+            </span>
+            <span onclick="event.stopPropagation(); toggleAllLessons()">✓ Все / ✗ Снять</span>
         </div>
-        <div class="filter-section">
-            <div class="filter-title">
+        <div id="lesson-filters" style="display:none; margin-top:10px;"></div>
+    </div>
+    
+    <div class="filter-section">
+        <div class="filter-title" style="cursor:pointer; user-select:none;" onclick="toggleSection('categories', this)">
+            <span style="display:flex; align-items:center; gap:8px;">
+                <span id="categories-arrow" style="font-size:12px; transition:transform 0.2s;">▶</span>
                 <span>📂 Категории</span>
-                <span onclick="toggleAll('category')">✓ Все / ✗ Снять</span>
-            </div>
-            <div class="chips" id="category-filters"></div>
+            </span>
+            <span onclick="event.stopPropagation(); toggleAll('category')">✓ Все / ✗ Снять</span>
         </div>
-        <div class="filter-section">
-            <div class="filter-title"><span>🔍 Поиск</span></div>
-            <input type="text" id="search-input" placeholder="Иероглиф, пиньинь или перевод..." 
-                   style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px; font-size:14px;">
-        </div>
-        <div class="filter-section">
-            <div class="filter-title"><span>📊 Показ</span></div>
-            <div class="mode-selector">
-                <button class="mode-btn active" data-show="all">Все</button>
-                <button class="mode-btn" data-show="learned">Только изученные</button>
-                <button class="mode-btn" data-show="new">Только новые</button>
-            </div>
+        <div id="category-filters" style="display:none; margin-top:10px;" class="chips"></div>
+    </div>
+    
+    <div class="filter-section">
+        <div class="filter-title"><span>🔍 Поиск</span></div>
+        <input type="text" id="search-input" placeholder="Иероглиф, пиньинь или перевод..." 
+               style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px; font-size:14px;">
+    </div>
+    
+    <div class="filter-section">
+        <div class="filter-title"><span>📊 Показ</span></div>
+        <div class="mode-selector">
+            <button class="mode-btn active" data-show="all">Все</button>
+            <button class="mode-btn" data-show="learned">Только изученные</button>
+            <button class="mode-btn" data-show="new">Только новые</button>
         </div>
     </div>
+</div>
 
     <div class="stats">
         <div class="stat-item">Всего: <strong id="stat-total">0</strong></div>
@@ -318,6 +331,41 @@ function buildFilters() {
         catContainer.appendChild(chip);
     });
 }
+
+function buildFilters() {
+    const books = [...new Set(allWords.map(w => w.book))].sort((a,b) => a-b);
+    const categories = [...new Set(allWords.map(w => w.category))].sort();
+
+    // === УЧЕБНИКИ ===
+    const bookContainer = document.getElementById('book-filters');
+    bookContainer.innerHTML = '';
+    books.forEach(b => {
+        const chip = document.createElement('div');
+        chip.className = 'book-chip active';
+        chip.textContent = bookNames[b] || `Учебник ${b}`;
+        chip.dataset.value = b;
+        state.filters.book.add(b);
+        chip.onclick = () => toggleBook(chip, b);
+        bookContainer.appendChild(chip);
+    });
+
+    // === УРОКИ (сворачиваемые) ===
+    buildLessonFilters();
+
+    // === КАТЕГОРИИ (сворачиваемые) ===
+    const catContainer = document.getElementById('category-filters');
+    catContainer.innerHTML = '';
+    categories.forEach(c => {
+        const chip = document.createElement('div');
+        chip.className = 'chip active';
+        chip.textContent = c;
+        chip.dataset.value = c;
+        state.filters.category.add(c);
+        chip.onclick = () => toggleChip(chip, 'category', c);
+        catContainer.appendChild(chip);
+    });
+}
+
 function buildLessonFilters() {
     const container = document.getElementById('lesson-filters');
     container.innerHTML = '';
@@ -327,98 +375,294 @@ function buildLessonFilters() {
         const bookGroup = document.createElement('div');
         bookGroup.className = 'book-group';
 
-        const bookName = document.createElement('div');
-        bookName.className = 'book-name';
-        
-        // Иконки для заголовка учебника
-        if (book === 1) {
-            bookName.textContent = '📗📙 Основной';
-        } else if (book === 2) {
-            bookName.textContent = '📗📙 Аудирование';
-        } else if (book === 3) {
-            bookName.textContent = '📘 Рабочая тетрадь';
-        } else {
-            bookName.textContent = bookNames[book] || `Учебник ${book}`;
-        }
-        bookGroup.appendChild(bookName);
+        // Заголовок учебника с кнопкой сворачивания
+        const bookHeader = document.createElement('div');
+        bookHeader.style.cssText = 'display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; cursor:pointer; user-select:none;';
 
-        // Получаем уникальные части для этого учебника
+        const bookTitle = document.createElement('div');
+        bookTitle.style.cssText = 'display:flex; align-items:center; gap:8px;';
+        
+        const bookArrow = document.createElement('span');
+        bookArrow.textContent = '▶';
+        bookArrow.style.cssText = 'font-size:12px; transition:transform 0.2s;';
+        bookArrow.className = 'book-arrow';
+        
+        const bookName = document.createElement('span');
+        bookName.className = 'book-name';
+        bookName.style.cssText = 'margin-bottom:0;';
+        if (book === 1) bookName.textContent = '📗📙 Основной';
+        else if (book === 2) bookName.textContent = '📗📙 Аудирование';
+        else if (book === 3) bookName.textContent = '📘 Рабочая тетрадь';
+        else bookName.textContent = bookNames[book] || `Учебник ${book}`;
+
+        bookTitle.appendChild(bookArrow);
+        bookTitle.appendChild(bookName);
+
+        const bookToggle = document.createElement('span');
+        bookToggle.style.cssText = 'font-weight:normal; color:#7f8c8d; cursor:pointer; font-size:13px;';
+        bookToggle.textContent = '✓ Все / ✗ Снять';
+        bookToggle.onclick = (e) => {
+            e.stopPropagation();
+            toggleAllInBook(book);
+        };
+        bookToggle.onmouseover = () => bookToggle.style.color = '#c0392b';
+        bookToggle.onmouseout = () => bookToggle.style.color = '#7f8c8d';
+
+        bookHeader.appendChild(bookTitle);
+        bookHeader.appendChild(bookToggle);
+        
+        bookHeader.onclick = () => toggleBookCollapse(book, bookArrow, bookContent);
+        bookGroup.appendChild(bookHeader);
+
+        const bookContent = document.createElement('div');
+        bookContent.className = 'book-content';
+        bookContent.style.cssText = 'display:none;';
+
         const parts = [...new Set(
             allWords.filter(w => w.book === book).map(w => w.part)
         )].sort((a,b) => a-b);
 
-        // Определяем, нужно ли показывать заголовки частей
         const showPartHeaders = parts.length > 1;
 
         parts.forEach(partNum => {
             const partGroup = document.createElement('div');
             partGroup.className = 'part-group';
 
-            // Заголовок части только если частей больше одной
             if (showPartHeaders) {
-                const partName = document.createElement('div');
+                const partHeader = document.createElement('div');
+                partHeader.style.cssText = 'display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; cursor:pointer; user-select:none;';
+
+                const partTitle = document.createElement('div');
+                partTitle.style.cssText = 'display:flex; align-items:center; gap:6px;';
+
+                const partArrow = document.createElement('span');
+                partArrow.textContent = '▶';
+                partArrow.style.cssText = 'font-size:10px; transition:transform 0.2s;';
+                partArrow.className = 'part-arrow';
+
+                const partName = document.createElement('span');
                 partName.className = 'part-name';
-                
-                // Иконка части для Основного и Аудирования
+                partName.style.cssText = 'margin-bottom:0;';
                 if (book === 1 || book === 2) {
-                    partName.textContent = partNum === 1 
-                        ? '📗 Часть 1' 
-                        : '📙 Часть 2';
+                    partName.textContent = partNum === 1 ? '📗 Часть 1' : '📙 Часть 2';
                 } else {
-                    partName.textContent = `Часть ${partNum}`;
+                    partName.textContent = `📘 Часть ${partNum}`;
                 }
-                partGroup.appendChild(partName);
+
+                partTitle.appendChild(partArrow);
+                partTitle.appendChild(partName);
+
+                const partToggle = document.createElement('span');
+                partToggle.style.cssText = 'font-weight:normal; color:#7f8c8d; cursor:pointer; font-size:12px;';
+                partToggle.textContent = '✓ Все / ✗ Снять';
+                partToggle.onclick = (e) => {
+                    e.stopPropagation();
+                    toggleAllInPart(book, partNum);
+                };
+                partToggle.onmouseover = () => partToggle.style.color = '#c0392b';
+                partToggle.onmouseout = () => partToggle.style.color = '#7f8c8d';
+
+                partHeader.appendChild(partTitle);
+                partHeader.appendChild(partToggle);
+                partHeader.onclick = () => togglePartCollapse(partNum, partArrow, partChips);
+                partGroup.appendChild(partHeader);
             }
 
-            // Получаем уроки для этой части
             const lessons = [...new Set(
                 allWords.filter(w => w.book === book && w.part === partNum).map(w => w.lesson)
             )].sort((a,b) => a-b);
 
             const partChips = document.createElement('div');
             partChips.className = 'chips';
+            partChips.style.cssText = showPartHeaders ? 'display:none;' : '';
 
             lessons.forEach(lesson => {
                 const chip = document.createElement('div');
                 chip.className = 'chip active';
                 chip.textContent = `Урок ${lesson}`;
                 chip.dataset.value = `${book}-${partNum}-${lesson}`;
+                chip.dataset.book = book;
+                chip.dataset.part = partNum;
                 state.filters.lesson.add(`${book}-${partNum}-${lesson}`);
                 chip.onclick = () => toggleChip(chip, 'lesson', `${book}-${partNum}-${lesson}`);
                 partChips.appendChild(chip);
             });
 
             partGroup.appendChild(partChips);
-            bookGroup.appendChild(partGroup);
+            bookContent.appendChild(partGroup);
         });
 
+        bookGroup.appendChild(bookContent);
         container.appendChild(bookGroup);
     });
 }
+
+// Сворачивание учебника
+function toggleBookCollapse(book, arrow, content) {
+    if (content.style.display === 'none') {
+        content.style.display = 'block';
+        arrow.style.transform = 'rotate(90deg)';
+    } else {
+        content.style.display = 'none';
+        arrow.style.transform = 'rotate(0deg)';
+    }
+}
+
+// Сворачивание части
+function togglePartCollapse(partNum, arrow, chips) {
+    if (chips.style.display === 'none') {
+        chips.style.display = 'flex';
+        arrow.style.transform = 'rotate(90deg)';
+    } else {
+        chips.style.display = 'none';
+        arrow.style.transform = 'rotate(0deg)';
+    }
+}
+
+// ==========================================
+// УПРАВЛЕНИЕ ФИЛЬТРАМИ УРОКОВ И УЧЕБНИКОВ
+// ==========================================
+
+// Переключить все уроки в конкретном учебнике
+function toggleAllInBook(book) {
+    const lessonKeys = [...new Set(
+        allWords.filter(w => w.book === book).map(w => `${w.book}-${w.part}-${w.lesson}`)
+    )];
+    const allSelected = lessonKeys.every(key => state.filters.lesson.has(key));
+    
+    lessonKeys.forEach(key => {
+        if (allSelected) state.filters.lesson.delete(key);
+        else state.filters.lesson.add(key);
+    });
+    
+    // Синхронизируем учебники (если это был последний урок, учебник снимется)
+    syncBooksAndLessons();
+    
+    document.querySelectorAll(`.chip[data-book="${book}"]`).forEach(chip => {
+        if (allSelected) chip.classList.remove('active');
+        else chip.classList.add('active');
+    });
+    
+    render();
+}
+
+// Переключить все уроки в конкретной части учебника
+function toggleAllInPart(book, partNum) {
+    const lessonKeys = [...new Set(
+        allWords.filter(w => w.book === book && w.part === partNum).map(w => `${w.book}-${w.part}-${w.lesson}`)
+    )];
+    const allSelected = lessonKeys.every(key => state.filters.lesson.has(key));
+    
+    lessonKeys.forEach(key => {
+        if (allSelected) state.filters.lesson.delete(key);
+        else state.filters.lesson.add(key);
+    });
+    
+    // Синхронизируем учебники
+    syncBooksAndLessons();
+    
+    document.querySelectorAll(`.chip[data-book="${book}"][data-part="${partNum}"]`).forEach(chip => {
+        if (allSelected) chip.classList.remove('active');
+        else chip.classList.add('active');
+    });
+    
+    render();
+}
+
 function toggleBook(chip, book) {
     if (state.filters.book.has(book)) {
+        // Снимаем учебник
         state.filters.book.delete(book);
         chip.classList.remove('active');
+        
+        // Снимаем все уроки этого учебника
+        const bookLessonKeys = [...new Set(
+            allWords.filter(w => w.book === book).map(w => `${w.book}-${w.part}-${w.lesson}`)
+        )];
+        bookLessonKeys.forEach(key => state.filters.lesson.delete(key));
+        
+        // Визуально снимаем все чипы уроков этого учебника
+        document.querySelectorAll(`.chip[data-book="${book}"]`).forEach(chip => {
+            chip.classList.remove('active');
+        });
     } else {
+        // Включаем учебник
         state.filters.book.add(book);
         chip.classList.add('active');
+        
+        // Включаем все уроки этого учебника
+        const bookLessonKeys = [...new Set(
+            allWords.filter(w => w.book === book).map(w => `${w.book}-${w.part}-${w.lesson}`)
+        )];
+        bookLessonKeys.forEach(key => state.filters.lesson.add(key));
+        
+        // Визуально включаем все чипы уроков этого учебника
+        document.querySelectorAll(`.chip[data-book="${book}"]`).forEach(chip => {
+            chip.classList.add('active');
+        });
     }
     render();
+}
+
+// Универсальная синхронизация: если уроков нет -> снимаем все учебники
+function syncBooksAndLessons() {
+    if (state.filters.lesson.size === 0) {
+        // Если не выбрано ни одного урока, очищаем фильтр учебников
+        state.filters.book.clear();
+        // Визуально снимаем галочки со всех учебников
+        document.querySelectorAll('.book-chip').forEach(chip => {
+            chip.classList.remove('active');
+        });
+    } else {
+        // Если уроки есть, убеждаемся, что их учебники тоже включены
+        state.filters.lesson.forEach(lessonKey => {
+            const book = parseInt(lessonKey.split('-')[0]);
+            if (!state.filters.book.has(book)) {
+                state.filters.book.add(book);
+                const bookChip = document.querySelector(`.book-chip[data-value="${book}"]`);
+                if (bookChip) bookChip.classList.add('active');
+            }
+        });
+    }
 }
 
 function toggleAllBooks() {
     const allValues = [...new Set(allWords.map(w => w.book))];
     const allSelected = state.filters.book.size === allValues.length;
-    const chips = document.querySelectorAll('.book-chip');
+    
+    const bookChips = document.querySelectorAll('.book-chip');
     state.filters.book.clear();
-    chips.forEach(chip => {
+    
+    bookChips.forEach(chip => {
+        const book = parseInt(chip.dataset.value);
         if (allSelected) {
+            // Снимаем учебник
             chip.classList.remove('active');
+            
+            // Снимаем все уроки этого учебника
+            const bookLessonKeys = [...new Set(
+                allWords.filter(w => w.book === book).map(w => `${w.book}-${w.part}-${w.lesson}`)
+            )];
+            bookLessonKeys.forEach(key => state.filters.lesson.delete(key));
+            
+            // Визуально снимаем все чипы уроков этого учебника
+            document.querySelectorAll(`.chip[data-book="${book}"]`).forEach(c => c.classList.remove('active'));
         } else {
-            state.filters.book.add(parseInt(chip.dataset.value));
+            // Включаем учебник
+            state.filters.book.add(book);
             chip.classList.add('active');
+            
+            // Включаем все уроки этого учебника
+            const bookLessonKeys = [...new Set(
+                allWords.filter(w => w.book === book).map(w => `${w.book}-${w.part}-${w.lesson}`)
+            )];
+            bookLessonKeys.forEach(key => state.filters.lesson.add(key));
+            
+            // Визуально включаем все чипы уроков этого учебника
+            document.querySelectorAll(`.chip[data-book="${book}"]`).forEach(c => c.classList.add('active'));
         }
     });
+    
     render();
 }
 
@@ -430,6 +674,12 @@ function toggleChip(chip, type, value) {
         state.filters[type].add(value);
         chip.classList.add('active');
     }
+    
+    // Если изменили уроки, синхронизируем с учебниками
+    if (type === 'lesson') {
+        syncBooksAndLessons();
+    }
+    
     render();
 }
 
@@ -796,6 +1046,61 @@ document.getElementById('search-input').oninput = (e) => {
     state.search = e.target.value;
     render();
 };
+
+// Сворачивание секций (Уроки, Категории)
+function toggleSection(section, header) {
+    // Правильный маппинг id: секция -> id стрелки и id контента
+    const idMap = {
+        'lessons':    { arrow: 'lessons-arrow',    content: 'lesson-filters' },
+        'categories': { arrow: 'categories-arrow', content: 'category-filters' }
+    };
+    
+    const map = idMap[section];
+    if (!map) return;
+    
+    const arrowEl = document.getElementById(map.arrow);
+    const contentEl = document.getElementById(map.content);
+    
+    if (!arrowEl || !contentEl) {
+        console.error('Не найдены элементы для секции:', section, 
+                      'arrow:', !!arrowEl, 'content:', !!contentEl);
+        return;
+    }
+    
+    if (contentEl.style.display === 'none') {
+        // Категории — flex (чипы в ряд), уроки — block (группы учебников)
+        contentEl.style.display = section === 'categories' ? 'flex' : 'block';
+        arrowEl.style.transform = 'rotate(90deg)';
+    } else {
+        contentEl.style.display = 'none';
+        arrowEl.style.transform = 'rotate(0deg)';
+    }
+}
+
+// Переключить все уроки во всех учебниках
+function toggleAllLessons() {
+    const allLessonKeys = [...new Set(allWords.map(w => `${w.book}-${w.part}-${w.lesson}`))];
+    const allSelected = allLessonKeys.every(key => state.filters.lesson.has(key));
+    
+    allLessonKeys.forEach(key => {
+        if (allSelected) {
+            state.filters.lesson.delete(key);
+        } else {
+            state.filters.lesson.add(key);
+        }
+    });
+    
+    // Синхронизируем учебники
+    syncBooksAndLessons();
+    
+    // Обновляем визуально все чипы уроков
+    document.querySelectorAll('#lesson-filters .chip').forEach(chip => {
+        if (allSelected) chip.classList.remove('active');
+        else chip.classList.add('active');
+    });
+    
+    render();
+}
 
 buildFilters();
 render();
