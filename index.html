@@ -173,123 +173,37 @@
             .flashcard-full, .dictation-card { padding: 30px 20px; }
         }
 
-
         /* ===== FLEX MODE (Z Flip, складные телефоны) ===== */
         @media (max-height: 500px) and (orientation: portrait) {
-    body {
-        padding: 8px;
-    }
-    
-    h1 {
-        font-size: 1.2em;
-        margin-bottom: 8px;
-    }
-    
-    /* Скрываем фильтры в Flex Mode — они занимают много места */
-    .panel:first-of-type {
-        display: none;
-    }
-    
-    /* Верхняя часть — карточка */
-    .flashcard-area,
-    .dictation-area,
-    .quiz-area {
-        padding: 5px;
-        height: 55vh;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-    }
-    
-    .flashcard-full,
-    .dictation-card {
-        min-height: auto;
-        height: 45vh;
-        max-width: 100%;
-        padding: 20px;
-        margin: 0 auto 10px;
-    }
-    
-    .flashcard-full .hanzi,
-    .dictation-card .hanzi {
-        font-size: 56px;
-    }
-    
-    .flashcard-full .pinyin,
-    .dictation-card .pinyin-answer {
-        font-size: 22px;
-    }
-    
-    .flashcard-full .translation,
-    .dictation-card .translation-answer {
-        font-size: 18px;
-    }
-    
-    /* Прогресс-бар компактнее */
-    .progress-bar {
-        margin: 5px 0;
-        height: 6px;
-    }
-    
-    /* Нижняя часть — кнопки */
-    .controls {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        background: white;
-        padding: 10px;
-        box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
-        z-index: 100;
-        display: flex;
-        justify-content: center;
-        gap: 8px;
-    }
-    
-    .controls .btn {
-        padding: 12px 16px;
-        font-size: 13px;
-        flex: 1;
-        max-width: 120px;
-    }
-    
-    /* Список слов — компактный */
-    .words-grid {
-        grid-template-columns: 1fr;
-        gap: 8px;
-    }
-    
-    .word-card {
-        padding: 10px;
-    }
-    
-    .word-hanzi {
-        font-size: 24px;
-    }
-    
-    /* Скрываем статистику в Flex Mode */
-    .stats {
-        display: none;
-    }
-    
-    /* Верхнее меню — одна строка */
-    .top-menu {
-        padding: 8px;
-        gap: 5px;
-    }
-    
-    .top-btn {
-        padding: 8px 12px;
-        font-size: 12px;
-    }
+            body { padding: 8px; }
+            h1 { font-size: 1.2em; margin-bottom: 8px; }
+            .panel:first-of-type { display: none; }
+            .flashcard-area, .dictation-area, .quiz-area {
+                padding: 5px; height: 55vh; display: flex; flex-direction: column; justify-content: center;
+            }
+            .flashcard-full, .dictation-card {
+                min-height: auto; height: 45vh; max-width: 100%; padding: 20px; margin: 0 auto 10px;
+            }
+            .flashcard-full .hanzi, .dictation-card .hanzi { font-size: 56px; }
+            .flashcard-full .pinyin, .dictation-card .pinyin-answer { font-size: 22px; }
+            .flashcard-full .translation, .dictation-card .translation-answer { font-size: 18px; }
+            .progress-bar { margin: 5px 0; height: 6px; }
+            .controls {
+                position: fixed; bottom: 0; left: 0; right: 0; background: white;
+                padding: 10px; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); z-index: 100;
+                display: flex; justify-content: center; gap: 8px;
+            }
+            .controls .btn { padding: 12px 16px; font-size: 13px; flex: 1; max-width: 120px; }
+            .words-grid { grid-template-columns: 1fr; gap: 8px; }
+            .word-card { padding: 10px; }
+            .word-hanzi { font-size: 24px; }
+            .stats { display: none; }
+            .top-menu { padding: 8px; gap: 5px; }
+            .top-btn { padding: 8px 12px; font-size: 12px; }
         }
-
-        /* Для Z Flip в полностью разложенном состоянии */
         @media (min-height: 800px) and (max-width: 400px) {
             /* Обычный мобильный layout — ничего не меняем */
         }
-
-        
     </style>
 </head>
 <body>
@@ -358,6 +272,7 @@
             <button class="mode-btn active" data-show="all">Все</button>
             <button class="mode-btn" data-show="learned">Только изученные</button>
             <button class="mode-btn" data-show="new">Только новые</button>
+            <button class="mode-btn" data-show="repeat">🔁 Надо повторить</button>
         </div>
     </div>
 </div>
@@ -391,7 +306,6 @@ const allWords = [
     pinyin: (w.pinyin || '').trim(),
     translation: (w.translation || '').trim(),
     category: (w.category || '').trim(),
-    // Приводим lesson к числу и part к числу (на случай если там строки)
     lesson: Number(w.lesson) || 1,
     part: Number(w.part) || 1,
     book: Number(w.book) || 1,
@@ -410,6 +324,7 @@ const state = {
     filters: { book: new Set(), lesson: new Set(), category: new Set() },
     search: '',
     learned: new Set(JSON.parse(localStorage.getItem('learned') || '[]')),
+    repeat: new Set(JSON.parse(localStorage.getItem('repeat') || '[]')),
     cardIndex: 0,
     quizIndex: 0,
     quizCorrect: 0,
@@ -420,6 +335,7 @@ const state = {
 
 function saveProgress() {
     localStorage.setItem('learned', JSON.stringify([...state.learned]));
+    localStorage.setItem('repeat', JSON.stringify([...state.repeat]));
 }
 
 // ============ ФИЛЬТРЫ ============
@@ -447,39 +363,6 @@ function buildFilters() {
         const chip = document.createElement('div');
         chip.className = 'chip active';
         chip.textContent = c;
-        state.filters.category.add(c);
-        chip.onclick = () => toggleChip(chip, 'category', c);
-        catContainer.appendChild(chip);
-    });
-}
-
-function buildFilters() {
-    const books = [...new Set(allWords.map(w => w.book))].sort((a,b) => a-b);
-    const categories = [...new Set(allWords.map(w => w.category))].sort();
-
-    // === УЧЕБНИКИ ===
-    const bookContainer = document.getElementById('book-filters');
-    bookContainer.innerHTML = '';
-    books.forEach(b => {
-        const chip = document.createElement('div');
-        chip.className = 'book-chip active';
-        chip.textContent = bookNames[b] || `Учебник ${b}`;
-        chip.dataset.value = b;
-        state.filters.book.add(b);
-        chip.onclick = () => toggleBook(chip, b);
-        bookContainer.appendChild(chip);
-    });
-
-    // === УРОКИ (сворачиваемые) ===
-    buildLessonFilters();
-
-    // === КАТЕГОРИИ (сворачиваемые) ===
-    const catContainer = document.getElementById('category-filters');
-    catContainer.innerHTML = '';
-    categories.forEach(c => {
-        const chip = document.createElement('div');
-        chip.className = 'chip active';
-        chip.textContent = c;
         chip.dataset.value = c;
         state.filters.category.add(c);
         chip.onclick = () => toggleChip(chip, 'category', c);
@@ -496,7 +379,6 @@ function buildLessonFilters() {
         const bookGroup = document.createElement('div');
         bookGroup.className = 'book-group';
 
-        // Заголовок учебника с кнопкой сворачивания
         const bookHeader = document.createElement('div');
         bookHeader.style.cssText = 'display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; cursor:pointer; user-select:none;';
 
@@ -531,7 +413,6 @@ function buildLessonFilters() {
 
         bookHeader.appendChild(bookTitle);
         bookHeader.appendChild(bookToggle);
-        
         bookHeader.onclick = () => toggleBookCollapse(book, bookArrow, bookContent);
         bookGroup.appendChild(bookHeader);
 
@@ -539,10 +420,7 @@ function buildLessonFilters() {
         bookContent.className = 'book-content';
         bookContent.style.cssText = 'display:none;';
 
-        const parts = [...new Set(
-            allWords.filter(w => w.book === book).map(w => w.part)
-        )].sort((a,b) => a-b);
-
+        const parts = [...new Set(allWords.filter(w => w.book === book).map(w => w.part))].sort((a,b) => a-b);
         const showPartHeaders = parts.length > 1;
 
         parts.forEach(partNum => {
@@ -589,10 +467,7 @@ function buildLessonFilters() {
                 partGroup.appendChild(partHeader);
             }
 
-            const lessons = [...new Set(
-                allWords.filter(w => w.book === book && w.part === partNum).map(w => w.lesson)
-            )].sort((a,b) => a-b);
-
+            const lessons = [...new Set(allWords.filter(w => w.book === book && w.part === partNum).map(w => w.lesson))].sort((a,b) => a-b);
             const partChips = document.createElement('div');
             partChips.className = 'chips';
             partChips.style.cssText = showPartHeaders ? 'display:none;' : '';
@@ -618,7 +493,6 @@ function buildLessonFilters() {
     });
 }
 
-// Сворачивание учебника
 function toggleBookCollapse(book, arrow, content) {
     if (content.style.display === 'none') {
         content.style.display = 'block';
@@ -629,7 +503,6 @@ function toggleBookCollapse(book, arrow, content) {
     }
 }
 
-// Сворачивание части
 function togglePartCollapse(partNum, arrow, chips) {
     if (chips.style.display === 'none') {
         chips.style.display = 'flex';
@@ -640,102 +513,60 @@ function togglePartCollapse(partNum, arrow, chips) {
     }
 }
 
-// ==========================================
-// УПРАВЛЕНИЕ ФИЛЬТРАМИ УРОКОВ И УЧЕБНИКОВ
-// ==========================================
-
-// Переключить все уроки в конкретном учебнике
 function toggleAllInBook(book) {
-    const lessonKeys = [...new Set(
-        allWords.filter(w => w.book === book).map(w => `${w.book}-${w.part}-${w.lesson}`)
-    )];
+    const lessonKeys = [...new Set(allWords.filter(w => w.book === book).map(w => `${w.book}-${w.part}-${w.lesson}`))];
     const allSelected = lessonKeys.every(key => state.filters.lesson.has(key));
     
     lessonKeys.forEach(key => {
         if (allSelected) state.filters.lesson.delete(key);
         else state.filters.lesson.add(key);
     });
-    
-    // Синхронизируем учебники (если это был последний урок, учебник снимется)
     syncBooksAndLessons();
-    
     document.querySelectorAll(`.chip[data-book="${book}"]`).forEach(chip => {
         if (allSelected) chip.classList.remove('active');
         else chip.classList.add('active');
     });
-    
     render();
 }
 
-// Переключить все уроки в конкретной части учебника
 function toggleAllInPart(book, partNum) {
-    const lessonKeys = [...new Set(
-        allWords.filter(w => w.book === book && w.part === partNum).map(w => `${w.book}-${w.part}-${w.lesson}`)
-    )];
+    const lessonKeys = [...new Set(allWords.filter(w => w.book === book && w.part === partNum).map(w => `${w.book}-${w.part}-${w.lesson}`))];
     const allSelected = lessonKeys.every(key => state.filters.lesson.has(key));
     
     lessonKeys.forEach(key => {
         if (allSelected) state.filters.lesson.delete(key);
         else state.filters.lesson.add(key);
     });
-    
-    // Синхронизируем учебники
     syncBooksAndLessons();
-    
     document.querySelectorAll(`.chip[data-book="${book}"][data-part="${partNum}"]`).forEach(chip => {
         if (allSelected) chip.classList.remove('active');
         else chip.classList.add('active');
     });
-    
     render();
 }
 
 function toggleBook(chip, book) {
     if (state.filters.book.has(book)) {
-        // Снимаем учебник
         state.filters.book.delete(book);
         chip.classList.remove('active');
-        
-        // Снимаем все уроки этого учебника
-        const bookLessonKeys = [...new Set(
-            allWords.filter(w => w.book === book).map(w => `${w.book}-${w.part}-${w.lesson}`)
-        )];
+        const bookLessonKeys = [...new Set(allWords.filter(w => w.book === book).map(w => `${w.book}-${w.part}-${w.lesson}`))];
         bookLessonKeys.forEach(key => state.filters.lesson.delete(key));
-        
-        // Визуально снимаем все чипы уроков этого учебника
-        document.querySelectorAll(`.chip[data-book="${book}"]`).forEach(chip => {
-            chip.classList.remove('active');
-        });
+        document.querySelectorAll(`.chip[data-book="${book}"]`).forEach(c => c.classList.remove('active'));
     } else {
-        // Включаем учебник
         state.filters.book.add(book);
         chip.classList.add('active');
-        
-        // Включаем все уроки этого учебника
-        const bookLessonKeys = [...new Set(
-            allWords.filter(w => w.book === book).map(w => `${w.book}-${w.part}-${w.lesson}`)
-        )];
+        const bookLessonKeys = [...new Set(allWords.filter(w => w.book === book).map(w => `${w.book}-${w.part}-${w.lesson}`))];
         bookLessonKeys.forEach(key => state.filters.lesson.add(key));
-        
-        // Визуально включаем все чипы уроков этого учебника
-        document.querySelectorAll(`.chip[data-book="${book}"]`).forEach(chip => {
-            chip.classList.add('active');
-        });
+        document.querySelectorAll(`.chip[data-book="${book}"]`).forEach(c => c.classList.add('active'));
     }
     render();
 }
 
-// Универсальная синхронизация: если уроков нет -> снимаем все учебники
 function syncBooksAndLessons() {
     if (state.filters.lesson.size === 0) {
-        // Если не выбрано ни одного урока, очищаем фильтр учебников
         state.filters.book.clear();
-        // Визуально снимаем галочки со всех учебников
-        document.querySelectorAll('.book-chip').forEach(chip => {
-            chip.classList.remove('active');
-        });
+        document.querySelectorAll('.book-chip').forEach(chip => chip.classList.remove('active'));
     } else {
-        // Если уроки есть, убеждаемся, что их учебники тоже включены
         state.filters.lesson.forEach(lessonKey => {
             const book = parseInt(lessonKey.split('-')[0]);
             if (!state.filters.book.has(book)) {
@@ -750,40 +581,24 @@ function syncBooksAndLessons() {
 function toggleAllBooks() {
     const allValues = [...new Set(allWords.map(w => w.book))];
     const allSelected = state.filters.book.size === allValues.length;
-    
     const bookChips = document.querySelectorAll('.book-chip');
     state.filters.book.clear();
     
     bookChips.forEach(chip => {
         const book = parseInt(chip.dataset.value);
         if (allSelected) {
-            // Снимаем учебник
             chip.classList.remove('active');
-            
-            // Снимаем все уроки этого учебника
-            const bookLessonKeys = [...new Set(
-                allWords.filter(w => w.book === book).map(w => `${w.book}-${w.part}-${w.lesson}`)
-            )];
+            const bookLessonKeys = [...new Set(allWords.filter(w => w.book === book).map(w => `${w.book}-${w.part}-${w.lesson}`))];
             bookLessonKeys.forEach(key => state.filters.lesson.delete(key));
-            
-            // Визуально снимаем все чипы уроков этого учебника
             document.querySelectorAll(`.chip[data-book="${book}"]`).forEach(c => c.classList.remove('active'));
         } else {
-            // Включаем учебник
             state.filters.book.add(book);
             chip.classList.add('active');
-            
-            // Включаем все уроки этого учебника
-            const bookLessonKeys = [...new Set(
-                allWords.filter(w => w.book === book).map(w => `${w.book}-${w.part}-${w.lesson}`)
-            )];
+            const bookLessonKeys = [...new Set(allWords.filter(w => w.book === book).map(w => `${w.book}-${w.part}-${w.lesson}`))];
             bookLessonKeys.forEach(key => state.filters.lesson.add(key));
-            
-            // Визуально включаем все чипы уроков этого учебника
             document.querySelectorAll(`.chip[data-book="${book}"]`).forEach(c => c.classList.add('active'));
         }
     });
-    
     render();
 }
 
@@ -795,19 +610,12 @@ function toggleChip(chip, type, value) {
         state.filters[type].add(value);
         chip.classList.add('active');
     }
-    
-    // Если изменили уроки, синхронизируем с учебниками
-    if (type === 'lesson') {
-        syncBooksAndLessons();
-    }
-    
+    if (type === 'lesson') syncBooksAndLessons();
     render();
 }
 
 function toggleAll(type) {
-    const allValues = [...new Set(allWords.map(w => 
-        type === 'lesson' ? `${w.book}-${w.part}-${w.lesson}` : w.category
-    ))];
+    const allValues = [...new Set(allWords.map(w => type === 'lesson' ? `${w.book}-${w.part}-${w.lesson}` : w.category))];
     const container = document.getElementById(`${type}-filters`);
     const chips = container.querySelectorAll('.chip');
     const allSelected = state.filters[type].size === allValues.length;
@@ -838,6 +646,7 @@ function getFilteredWords() {
         }
         if (state.show === 'learned' && !state.learned.has(w.key)) return false;
         if (state.show === 'new' && state.learned.has(w.key)) return false;
+        if (state.show === 'repeat' && !state.repeat.has(w.key)) return false;
         return true;
     });
 }
@@ -884,9 +693,12 @@ function renderList(words, area) {
                     <div class="word-translation">${w.translation}</div>
                     <div class="word-meta">
                         📖 ${bookNames[w.book]}, часть ${w.part}, урок ${w.lesson} · ${w.category}
-                        <span style="float:right; cursor:pointer;" onclick="toggleLearned('${w.key}')">
+                        <span style="float:right; cursor:pointer;" onclick="toggleLearned('${w.key}')" title="${state.learned.has(w.key) ? 'Снять отметку изученного' : 'Отметить как изученное'}">
                             ${state.learned.has(w.key) ? '✅' : '⬜'}
                         </span>
+                        ${state.learned.has(w.key) ? `<span style="float:right; cursor:pointer; margin-right:8px;" onclick="toggleRepeat('${w.key}')" title="Нужно повторить">
+                            ${state.repeat.has(w.key) ? '🔁' : '➖'}
+                        </span>` : ''}
                     </div>
                 </div>
             `).join('')}
@@ -911,6 +723,7 @@ function renderCards(words, area) {
             </div>
             <div class="controls">
                 <button class="btn btn-secondary" onclick="prevCard()">← Назад</button>
+                ${state.learned.has(w.key) ? `<button class="btn ${state.repeat.has(w.key) ? 'btn-primary' : 'btn-secondary'}" onclick="toggleRepeat('${w.key}')" title="Нужно повторить" style="padding:10px 14px;">🔁</button>` : ''}
                 <button class="btn btn-danger" onclick="markCard(false)">❌ Не знаю</button>
                 <button class="btn btn-success" onclick="markCard(true)">✓ Знаю</button>
                 <button class="btn btn-primary" onclick="nextCard()">Далее →</button>
@@ -952,6 +765,7 @@ function renderDictation(words, area) {
             </div>
             <div class="controls">
                 <button class="btn btn-secondary" onclick="prevCard()">← Назад</button>
+                ${state.learned.has(w.key) ? `<button class="btn ${state.repeat.has(w.key) ? 'btn-primary' : 'btn-secondary'}" onclick="toggleRepeat('${w.key}')" title="Нужно повторить" style="padding:10px 14px;">🔁</button>` : ''}
                 <button class="btn btn-danger" onclick="markCard(false)">❌ Не знаю</button>
                 <button class="btn btn-success" onclick="markCard(true)">✓ Знаю</button>
                 <button class="btn btn-primary" onclick="nextCard()">Далее →</button>
@@ -1077,13 +891,27 @@ function markCard(known) {
     const words = getFilteredWords();
     const w = words[state.cardIndex];
     if (known) state.learned.add(w.key);
-    else state.learned.delete(w.key);
+    else {
+        state.learned.delete(w.key);
+        state.repeat.delete(w.key);
+    }
     saveProgress();
     nextCard();
 }
 function toggleLearned(key) {
-    if (state.learned.has(key)) state.learned.delete(key);
-    else state.learned.add(key);
+    if (state.learned.has(key)) {
+        state.learned.delete(key);
+        state.repeat.delete(key);
+    } else {
+        state.learned.add(key);
+    }
+    saveProgress();
+    render();
+}
+function toggleRepeat(key) {
+    if (!state.learned.has(key)) return;
+    if (state.repeat.has(key)) state.repeat.delete(key);
+    else state.repeat.add(key);
     saveProgress();
     render();
 }
@@ -1100,6 +928,7 @@ function shuffleWords() {
 function resetProgress() {
     if (!confirm('Сбросить весь прогресс изучения?')) return;
     state.learned.clear();
+    state.repeat.clear();
     state.cardIndex = 0;
     state.quizIndex = 0;
     state.quizCorrect = 0;
@@ -1120,10 +949,8 @@ document.querySelectorAll('.top-btn').forEach(btn => {
         state.quizCorrect = 0;
         state.quizTotal = 0;
         state.dictationRevealed = false;
-        document.getElementById('dictation-submenu').style.display = 
-            state.mode === 'dictation' ? 'flex' : 'none';
-        document.getElementById('test-submenu').style.display = 
-            state.mode === 'test' ? 'flex' : 'none';
+        document.getElementById('dictation-submenu').style.display = state.mode === 'dictation' ? 'flex' : 'none';
+        document.getElementById('test-submenu').style.display = state.mode === 'test' ? 'flex' : 'none';
         render();
     };
 });
@@ -1168,28 +995,18 @@ document.getElementById('search-input').oninput = (e) => {
     render();
 };
 
-// Сворачивание секций (Уроки, Категории)
 function toggleSection(section, header) {
-    // Правильный маппинг id: секция -> id стрелки и id контента
     const idMap = {
         'lessons':    { arrow: 'lessons-arrow',    content: 'lesson-filters' },
         'categories': { arrow: 'categories-arrow', content: 'category-filters' }
     };
-    
     const map = idMap[section];
     if (!map) return;
-    
     const arrowEl = document.getElementById(map.arrow);
     const contentEl = document.getElementById(map.content);
-    
-    if (!arrowEl || !contentEl) {
-        console.error('Не найдены элементы для секции:', section, 
-                      'arrow:', !!arrowEl, 'content:', !!contentEl);
-        return;
-    }
+    if (!arrowEl || !contentEl) return;
     
     if (contentEl.style.display === 'none') {
-        // Категории — flex (чипы в ряд), уроки — block (группы учебников)
         contentEl.style.display = section === 'categories' ? 'flex' : 'block';
         arrowEl.style.transform = 'rotate(90deg)';
     } else {
@@ -1198,35 +1015,22 @@ function toggleSection(section, header) {
     }
 }
 
-// Переключить все уроки во всех учебниках
 function toggleAllLessons() {
     const allLessonKeys = [...new Set(allWords.map(w => `${w.book}-${w.part}-${w.lesson}`))];
     const allSelected = allLessonKeys.every(key => state.filters.lesson.has(key));
-    
     allLessonKeys.forEach(key => {
-        if (allSelected) {
-            state.filters.lesson.delete(key);
-        } else {
-            state.filters.lesson.add(key);
-        }
+        if (allSelected) state.filters.lesson.delete(key);
+        else state.filters.lesson.add(key);
     });
-    
-    // Синхронизируем учебники
     syncBooksAndLessons();
-    
-    // Обновляем визуально все чипы уроков
     document.querySelectorAll('#lesson-filters .chip').forEach(chip => {
         if (allSelected) chip.classList.remove('active');
         else chip.classList.add('active');
     });
-    
     render();
 }
 
-
-// ===== ОПРЕДЕЛЕНИЕ FLEX MODE (Z Flip) =====
 function isFlexMode() {
-    // Flex Mode: низкая высота + портретная ориентация
     return window.innerHeight <= 500 && window.innerWidth < window.innerHeight;
 }
 
@@ -1234,26 +1038,20 @@ function handleFlexMode() {
     const body = document.body;
     if (isFlexMode()) {
         body.classList.add('flex-mode');
-        console.log('📱 Flex Mode detected (Z Flip)');
     } else {
         body.classList.remove('flex-mode');
     }
 }
 
-// Слушаем изменение размера (когда пользователь складывает/разкладывает телефон)
 let resizeTimer;
 window.addEventListener('resize', () => {
     clearTimeout(resizeTimer);
     resizeTimer = setTimeout(handleFlexMode, 200);
 });
-
-// Проверяем при загрузке
 handleFlexMode();
-// Samsung Flex Mode API (только для Samsung Internet Browser)
+
 if (window.SamsungFlexMode) {
     window.SamsungFlexMode.addEventListener('flexmodechange', (event) => {
-        console.log('Samsung Flex Mode:', event.state);
-        // 'flat' — разложен, 'flex' — согнут, 'closed' — закрыт
         if (event.state === 'flex') {
             document.body.classList.add('flex-mode');
         } else {
@@ -1261,7 +1059,6 @@ if (window.SamsungFlexMode) {
         }
     });
 }
-
 
 buildFilters();
 render();
